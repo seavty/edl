@@ -11,6 +11,7 @@ import java.util.List;
 
 import x_ware.com.edl.R;
 import x_ware.com.edl.interfaces.IRecyclerViewClickListener;
+import x_ware.com.edl.networking.models.project.ProjectCommunicationViewModel;
 import x_ware.com.edl.networking.models.project.ProjectSpecificationViewModel;
 
 /**
@@ -48,13 +49,14 @@ public class ProjectSpecificationAdapter extends RecyclerView.Adapter<ProjectSpe
         return projectSpecifications.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener  {
         private TextView lblProductCode, lblRemarks;
 
         ViewHolder(View itemView) {
             super(itemView);
 
             itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
             lblProductCode = itemView.findViewById(R.id.lblProductCode);
             lblRemarks = itemView.findViewById(R.id.lblRemarks);
 
@@ -64,6 +66,13 @@ public class ProjectSpecificationAdapter extends RecyclerView.Adapter<ProjectSpe
         public void onClick(View view) {
             ProjectSpecificationViewModel projectSpecification = projectSpecifications.get(getAdapterPosition());
             listener.onClick(view, getAdapterPosition(), projectSpecification);
+        }
+
+        @Override
+        public boolean onLongClick(View view) {
+            ProjectSpecificationViewModel projectSpecification = projectSpecifications.get(getAdapterPosition());
+            listener.onLongClick(view, getAdapterPosition(), projectSpecification);
+            return true;
         }
     }
 }

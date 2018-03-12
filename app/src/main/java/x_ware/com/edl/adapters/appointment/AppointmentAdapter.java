@@ -19,6 +19,7 @@ import x_ware.com.edl.helpers.Helper;
 import x_ware.com.edl.interfaces.IRecyclerViewClickListener;
 import x_ware.com.edl.networking.models.appointment.AppointmentViewModel;
 import x_ware.com.edl.modules.project.ProjectActivity;
+import x_ware.com.edl.networking.models.project.ProjectCommunicationViewModel;
 
 /**
  * Created by buneavros on 2/21/18.
@@ -95,7 +96,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
         return appointments.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         private TextView lblTiming, lblCompanyName, lblAddress;
         private ImageView imgAction, imgCheck;
         private ImageButton imbProject;
@@ -104,6 +105,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
             super(itemView);
 
             itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
 
             lblTiming = itemView.findViewById(R.id.lblTiming);
             lblCompanyName = itemView.findViewById(R.id.lblCompanyName);
@@ -119,6 +121,13 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
         public void onClick(View view) {
             AppointmentViewModel appointment = appointments.get(getAdapterPosition());
             listener.onClick(view, getAdapterPosition(), appointment);
+        }
+
+        @Override
+        public boolean onLongClick(View view) {
+            AppointmentViewModel appointment = appointments.get(getAdapterPosition());
+            listener.onLongClick(view, getAdapterPosition(), appointment);
+            return true;
         }
     }
 }

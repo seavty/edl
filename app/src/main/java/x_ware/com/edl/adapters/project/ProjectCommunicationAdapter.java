@@ -50,13 +50,14 @@ public class ProjectCommunicationAdapter extends RecyclerView.Adapter<ProjectCom
         return projectCommunications.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         private TextView lblCompanyName, lblAction, lblDetails;
 
         ViewHolder(View itemView) {
             super(itemView);
 
             itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
             lblCompanyName = itemView.findViewById(R.id.lblCompanyName);
             lblAction = itemView.findViewById(R.id.lblAction);
             lblDetails = itemView.findViewById(R.id.lblDetails);
@@ -67,6 +68,13 @@ public class ProjectCommunicationAdapter extends RecyclerView.Adapter<ProjectCom
         public void onClick(View view) {
             ProjectCommunicationViewModel projectCommunication = projectCommunications.get(getAdapterPosition());
             listener.onClick(view, getAdapterPosition(), projectCommunication);
+        }
+
+        @Override
+        public boolean onLongClick(View view) {
+            ProjectCommunicationViewModel projectCommunication = projectCommunications.get(getAdapterPosition());
+            listener.onLongClick(view, getAdapterPosition(), projectCommunication);
+            return true;
         }
     }
 }

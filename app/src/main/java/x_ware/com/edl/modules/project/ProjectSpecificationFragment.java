@@ -114,7 +114,7 @@ public class ProjectSpecificationFragment extends Fragment {
 
                 @Override
                 public void onLongClick(View view, int position, Object obj) {
-
+                    Log.d(TAG, "onLongClick: ");
                 }
             };
             List<ProjectSpecificationViewModel> specifications = response.body().items;

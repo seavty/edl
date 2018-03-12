@@ -122,7 +122,7 @@ public class ProjectActivity extends AppCompatActivity {
 
                     @Override
                     public void onLongClick(View view, int position, Object obj) {
-
+                        Log.d(TAG, "onLongClick: ");
                     }
                 };
                 List<ProjectViewModel> projects = response.body().items;

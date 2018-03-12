@@ -113,6 +113,7 @@ public class ProjectFragment extends Fragment {
 
                     @Override
                     public void onLongClick(View view, int position, Object obj) {
+                        Log.d(TAG, "onLongClick: ");
 
                     }
                 };

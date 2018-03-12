@@ -46,7 +46,6 @@ public class ProjectCommunicationFragment extends Fragment {
 
     private ProjectViewModel project;
 
-
     public ProjectCommunicationFragment() {
         // Required empty public constructor
     }
@@ -54,33 +53,26 @@ public class ProjectCommunicationFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_project_communication, container, false);
         initializeComponents(view);
-
         return view;
     }
 
     //private methods
     //-> initializeComponents()
     private void initializeComponents(View view){
-
-
         if(getActivity().getIntent() != null && getActivity().getIntent().hasExtra("ProjectViewModel"))
             project = (ProjectViewModel) getActivity().getIntent().getSerializableExtra("ProjectViewModel");
 
         setUpViews(view);
         getProjectSpecifications();
-
     }
 
     private void setUpViews(View view) {
         progress = ProgressDialogHelper.getInstance(getActivity());
-
         rcvProjectCommunication = view.findViewById(R.id.rcvProjectCommunication);
         rcvProjectCommunication.setHasFixedSize(true);
         rcvProjectCommunication.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
-
         lblTotalRecord = view.findViewById(R.id.lblTotalRecord);
     }
 
@@ -101,18 +93,16 @@ public class ProjectCommunicationFragment extends Fragment {
 
     //-> handleResults
     private void handleResults(Response<GetListModel<ProjectCommunicationViewModel>> response){
-        Log.d(TAG, "handleResults: " + response.code());
         if(response.code() == 200) {
             IRecyclerViewClickListener listener = new IRecyclerViewClickListener() {
                 @Override
                 public void onClick(View view, int position, Object obj) {
-                    Log.d(TAG, "onClick: " + position);
-                    //startActivity(new Intent(getApplicationContext(), ProjectDetailActivity.class));
+                    Log.d(TAG, "onClick: ");
                 }
 
                 @Override
                 public void onLongClick(View view, int position, Object obj) {
-
+                    Log.d(TAG, "onLongClick: ");
                 }
             };
             lblTotalRecord.setText(response.body().metaData.totalRecord + ""); // total record is integer so need to convert it to string
