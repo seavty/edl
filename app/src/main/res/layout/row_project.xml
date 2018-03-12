@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/row_margin_top"
+    android:layout_marginBottom="@dimen/row_margin_bottom"
+    android:layout_marginLeft="@dimen/row_margin_left"
+    android:layout_marginRight="@dimen/row_margin_right">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- LinearLayout wrap  -->
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/row_padding">
+
+            <!-- LinearLayout for Project Name  -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/lblProjectName"
+                    android:text="Project Name  Dummy"
+                    android:textSize="@dimen/text_size_medium"
+                    android:layout_width="match_parent"
+                    android:textColor="@color/black"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+            <!-- end LinearLayout for Project Name  -->
+
+            <!-- LinearLayout for stage  -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/lblStage"
+                    android:text="Stage Dummy"
+                    android:textSize="@dimen/text_size_small"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"/>
+
+            </LinearLayout>
+            <!-- end LinearLayout for stage  -->
+
+        </LinearLayout>
+        <!-- LinearLayout wrap  -->
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

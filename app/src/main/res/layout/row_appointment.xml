@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/row_margin_top"
+    android:layout_marginBottom="@dimen/row_margin_bottom"
+    android:layout_marginLeft="@dimen/row_margin_left"
+    android:layout_marginRight="@dimen/row_margin_right">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- LinearLayout wrap  -->
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/row_padding">
+
+            <!-- image view -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/imgAction"
+                    android:layout_width="@dimen/drawable_width_48dp"
+                    android:layout_height="@dimen/drawable_height_48dp"
+                    android:src="@drawable/ic_dvr_black_48px"/>
+            </LinearLayout>
+            <!-- image view -->
+
+            <!-- LinearLayout timing, Company Name, address -->
+            <LinearLayout
+                android:layout_width="0sp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp">
+
+                <!-- LinearLayout Info -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <!-- LinearLayout for Timing -->
+                    <LinearLayout
+                        android:layout_width="0sp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+                        <TextView
+                            android:id="@+id/lblTiming"
+                            android:text="Timing"
+                            android:textSize="@dimen/text_size_medium"
+                            android:textColor="@color/black"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            />
+                    </LinearLayout>
+                    <!-- LinearLayout for Timing -->
+
+                    <!-- LinearLayout for Company Name  -->
+                    <LinearLayout
+                        android:layout_width="0sp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+                        <TextView
+                            android:id="@+id/lblCompanyName"
+                            android:text="Company"
+                            android:textSize="@dimen/text_size_medium"
+                            android:textColor="@color/black"
+                            android:layout_width="match_parent"
+                            android:gravity="right"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+                    <!-- end LinearLayout for Company Name  -->
+
+                </LinearLayout>
+                <!-- LinearLayout Info-->
+
+                <!-- LinearLayout for Address  -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/lblAddress"
+                        android:text="Address Dummy"
+                        android:textSize="@dimen/text_size_small"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"/>
+                </LinearLayout>
+                <!-- end LinearLayout for Address  -->
+
+            </LinearLayout>
+            <!-- LinearLayout timing, Company Name, address -->
+
+
+            <!-- LinearLayout project image view -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <ImageButton
+                    android:id="@+id/imbProject"
+                    android:layout_width="@dimen/drawable_width_48dp"
+                    android:layout_height="@dimen/drawable_height_48dp"
+                    android:src="@drawable/project"
+                    android:scaleType="centerCrop"
+                    android:background="@null"/>
+                
+                <!--<ImageView-->
+                    <!--android:layout_width="@dimen/drawable_width_48dp"-->
+                    <!--android:layout_height="@dimen/drawable_height_48dp"-->
+                    <!--android:src="@drawable/ic_card_travel_black_24px"/>-->
+            </LinearLayout>
+            <!-- LinearLayout project image view -->
+
+            <!-- LinearLayout project image view -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/imgCheck"
+                    android:layout_width="@dimen/drawable_width_48dp"
+                    android:layout_height="@dimen/drawable_height_48dp"
+                    android:src="@drawable/check"/>
+            </LinearLayout>
+            <!-- LinearLayout project image view -->
+
+        </LinearLayout>
+        <!-- LinearLayout wrap  -->
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

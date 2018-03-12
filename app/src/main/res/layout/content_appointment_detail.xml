@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/layout_padding"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="x_ware.com.edl.modules.appointment.AppointmentDetailActivity"
+    tools:showIn="@layout/activity_appointment_detail">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/layout_padding"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <!-- LinearLayout for Check in -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/layout_padding">
+                    <!-- button check in -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <Button
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/button_padding"
+                            android:text="Check in"
+                            android:id="@+id/btnCheckInOrCheckOut"
+                            android:textSize="@dimen/text_size_medium" />
+                    </LinearLayout>
+                    <!--end  button check in -->
+
+                    <!-- image view  -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:id="@+id/imgAction"
+                            android:layout_width="128dp"
+                            android:layout_height="128dp"
+                            android:src="@drawable/ic_dvr_black_48px" />
+                    </LinearLayout>
+                    <!--end  image view -->
+
+                    <!--Timing -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/image_view_width"
+                            android:layout_height="@dimen/image_view_height"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_alarm_black_48px"
+                            android:visibility="gone" />
+
+                        <TextView
+                            android:id="@+id/lblTiming"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginLeft="@dimen/text_view_margin_left"
+                            android:text="22-02-2018 dummy"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/text_size_medium" />
+                    </LinearLayout>
+                    <!-- End Timing -->
+
+
+                    <!--Company Name -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/image_view_width"
+                            android:layout_height="@dimen/image_view_height"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_account_balance_black_48px"
+                            android:visibility="gone" />
+
+                        <TextView
+                            android:id="@+id/lblCompanyName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginLeft="@dimen/text_view_margin_left"
+                            android:text="Company Name Dummy"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/text_size_medium" />
+                    </LinearLayout>
+                    <!-- End Company Name -->
+
+
+                    <!--Phone -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/image_view_width"
+                            android:layout_height="@dimen/image_view_height"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_local_phone_black_48px"
+                            android:visibility="gone" />
+
+                        <TextView
+                            android:id="@+id/lblPhoneNumber"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginLeft="@dimen/text_view_margin_left"
+                            android:text="012 123 456 dummy"
+                            android:textColor="@color/primary"
+                            android:textSize="@dimen/text_size_medium" />
+                    </LinearLayout>
+                    <!-- End Phone -->
+
+
+                    <!--subject -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0sp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+                            <TextView
+                                android:id="@+id/lblSubject"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginLeft="@dimen/text_view_margin_left"
+                                android:text="Subject dummy"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/text_size_medium" />
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <ImageView
+                                android:layout_width="@dimen/image_view_width"
+                                android:layout_height="@dimen/image_view_height"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_event_note_black_48px"
+                                android:visibility="gone" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+                    <!-- end subject -->
+
+
+                    <!--Detail -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/image_view_width"
+                            android:layout_height="@dimen/image_view_height"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_rate_review_black_48px"
+                            android:visibility="gone" />
+                        <LinearLayout
+                            android:layout_width="0sp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+                            <TextView
+                                android:id="@+id/lblDetail"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginLeft="@dimen/text_view_margin_left"
+                                android:text="Detail dummy"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/text_size_medium" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+                            <ImageButton
+                                android:id="@+id/imbEditDetail"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:src="@drawable/pencil"
+                                android:background="@null"
+                                android:scaleType="centerCrop"
+                                android:layout_marginRight="2sp"/>
+
+                        </LinearLayout>
+                    </LinearLayout>
+                    <!-- end detail -->
+
+                    <!-- Status -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/padding_10dp"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="@dimen/image_view_width"
+                            android:layout_height="@dimen/image_view_height"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_location_on_black_24px"
+
+                            />
+
+                        <TextView
+                            android:id="@+id/lblStatus"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginLeft="@dimen/text_view_margin_left"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/text_size_medium" />
+                    </LinearLayout>
+                    <!-- end detail -->
+
+
+                    <!-- button go to project -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/padding_10dp">
+
+                        <Button
+                            android:id="@+id/btnGoToProject"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Go to project"
+                            android:visibility="gone"/>
+                    </LinearLayout>
+                    <!-- end button go to project -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <!-- image view camera  -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center">
+
+                            <ImageView
+                                android:layout_width="128dp"
+                                android:layout_height="128dp"
+                                android:src="@drawable/camera" />
+                        </LinearLayout>
+                        <!-- image view camera  -->
+                    </LinearLayout>
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+
+
+
+
+            <!-- LinearLayout for Reserve -->
+
+            <!-- end  LinearLayout for Reserve -->
+
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+
+</LinearLayout>
