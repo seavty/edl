@@ -13,7 +13,7 @@ public class ProjectCommunicationViewModel implements Serializable {
     @SerializedName("id")
     public int id;
 
-    @SerializedName("companyName")
+    @SerializedName("comp_Name")
     public String companyName;
 
     @SerializedName("action")

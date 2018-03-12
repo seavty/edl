@@ -17,8 +17,23 @@
             android:orientation="vertical"
             android:padding="@dimen/row_padding">
 
+            <!-- LinearLayout for Company Name  -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/lblCompanyName"
+                    android:text="Company Name"
+                    android:textSize="@dimen/text_size_medium"
+                    android:textColor="@color/black"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"/>
+            </LinearLayout>
+            <!-- end LinearLayout for Company Name  -->
 
-        <!-- LinearLayout for Action  -->
+
+            <!-- LinearLayout for Action  -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">

@@ -159,7 +159,7 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
     //-> getAppointment()
     private void getAppointments(){
         try {
-            RetrofitProvider.get().create(IAppointmentAPI.class).getAppointment(appointment.id)
+            RetrofitProvider.get(this).create(IAppointmentAPI.class).getAppointment(appointment.id)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe(x -> progress.show())

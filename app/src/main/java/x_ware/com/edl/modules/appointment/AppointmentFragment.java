@@ -140,7 +140,7 @@ public class AppointmentFragment extends Fragment {
     //-> getAppointments
     private void getAppointments(){
         try {
-            RetrofitProvider.get().create(IAppointmentAPI.class).searchAppointments(currentPage, DateTimeHelper.convert_dd_mm_yyyy_To_yyyy_mm_dd(txtDate.getText().toString()))
+            RetrofitProvider.get(getActivity().getBaseContext()).create(IAppointmentAPI.class).searchAppointments(currentPage, DateTimeHelper.convert_dd_mm_yyyy_To_yyyy_mm_dd(txtDate.getText().toString()))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe(x -> progress.show())

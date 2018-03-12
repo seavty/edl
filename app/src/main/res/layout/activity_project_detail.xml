@@ -8,12 +8,16 @@
     android:fitsSystemWindows="true"
     tools:context="x_ware.com.edl.modules.project.ProjectDetailActivity">
 
+
+
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/appbar_padding_top"
         android:theme="@style/AppTheme.AppBarOverlay">
+
+
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -26,6 +30,35 @@
             app:title="@string/app_name">
 
         </android.support.v7.widget.Toolbar>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:padding="@dimen/row_padding"
+            android:gravity="center_vertical">
+
+            <ImageButton
+                android:padding="@dimen/row_padding"
+                android:layout_width="@dimen/drawable_height_48dp"
+                android:layout_height="@dimen/drawable_height_48dp"
+                android:src="@drawable/logo"
+                android:background="@null"
+                android:scaleType="centerCrop"
+                />
+
+            <TextView
+                android:padding="@dimen/row_padding"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Project Name"
+                android:id="@+id/lblProjectName"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_medium"/>
+
+        </LinearLayout>
+
+
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tabs"
@@ -52,6 +85,7 @@
 
         </android.support.design.widget.TabLayout>
     </android.support.design.widget.AppBarLayout>
+
 
     <android.support.v4.view.ViewPager
         android:id="@+id/container"

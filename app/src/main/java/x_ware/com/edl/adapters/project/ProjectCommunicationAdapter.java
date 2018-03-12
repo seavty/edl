@@ -39,6 +39,8 @@ public class ProjectCommunicationAdapter extends RecyclerView.Adapter<ProjectCom
     public void onBindViewHolder(ProjectCommunicationAdapter.ViewHolder holder, int position) {
         ProjectCommunicationViewModel projectCommunication = projectCommunications.get(position);
         //-- remember id must convert to text first before setting
+
+        holder.lblCompanyName.setText(projectCommunication.companyName);
         holder.lblAction.setText(projectCommunication.action);
         holder.lblDetails.setText(projectCommunication.details);
     }
@@ -49,12 +51,13 @@ public class ProjectCommunicationAdapter extends RecyclerView.Adapter<ProjectCom
     }
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private TextView lblAction, lblDetails;
+        private TextView lblCompanyName, lblAction, lblDetails;
 
         ViewHolder(View itemView) {
             super(itemView);
 
             itemView.setOnClickListener(this);
+            lblCompanyName = itemView.findViewById(R.id.lblCompanyName);
             lblAction = itemView.findViewById(R.id.lblAction);
             lblDetails = itemView.findViewById(R.id.lblDetails);
 

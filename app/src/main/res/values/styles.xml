@@ -27,4 +27,11 @@
         <item name="android:textColor">@color/btnTextColor</item>
     </style>
 
+
+    <style name="NavigationDrawerStyle">
+        <item name="android:textSize">24sp</item><!-- text size in menu-->
+        <item name="android:listPreferredItemHeightSmall">40dp</item><!-- item size in menu-->
+        <item name="listPreferredItemHeightSmall">40dp</item><!-- item size in menu-->
+    </style>
+
 </resources>

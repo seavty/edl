@@ -9,6 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import x_ware.com.edl.R;
 import x_ware.com.edl.adapters.ViewPagerAdapter;
@@ -37,6 +38,8 @@ public class ProjectDetailActivity extends AppCompatActivity {
     private ProjectViewModel project;
     private Toolbar toolbar;
     private TabLayout tabLayout;
+
+    private TextView lblProjectName;
 
     private int[] tabIcons = {
             R.drawable.ic_business_white_24px,
@@ -79,6 +82,14 @@ public class ProjectDetailActivity extends AppCompatActivity {
         setupTabIcons();
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
+
+        lblProjectName = findViewById(R.id.lblProjectName);
+
+
+        if(getIntent() != null && getIntent().hasExtra("ProjectViewModel")) {
+            project = (ProjectViewModel) getIntent().getSerializableExtra("ProjectViewModel");
+            lblProjectName.setText(project.description);
+        }
 
     }
 
