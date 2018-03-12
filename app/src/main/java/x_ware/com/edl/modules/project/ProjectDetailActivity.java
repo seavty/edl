@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import static maes.tech.intentanim.CustomIntent.customType;
 import x_ware.com.edl.R;
 import x_ware.com.edl.adapters.ViewPagerAdapter;
 import x_ware.com.edl.networking.models.project.ProjectViewModel;
@@ -130,4 +131,6 @@ public class ProjectDetailActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 }

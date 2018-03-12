@@ -45,6 +45,8 @@ import x_ware.com.edl.networking.models.appointment.AppointmentViewModel;
 import x_ware.com.edl.modules.project.ProjectActivity;
 import x_ware.com.edl.networking.RetrofitProvider;
 
+import static maes.tech.intentanim.CustomIntent.customType;
+
 public class AppointmentDetailActivity extends AppCompatActivity implements AppointmentDetailDialog.AppointmentDetailDialogListener {
     private static final String TAG = "AppointmentDetailActivi";
 
@@ -510,6 +512,4 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
         progress.dismiss();
         Helper.reuqestError(getApplicationContext(), TAG, t);
     }
-
-
 }

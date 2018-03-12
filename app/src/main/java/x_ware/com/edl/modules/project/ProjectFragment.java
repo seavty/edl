@@ -21,6 +21,7 @@ import java.util.List;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
+import maes.tech.intentanim.CustomIntent;
 import retrofit2.Call;
 import retrofit2.Response;
 import x_ware.com.edl.R;
@@ -109,6 +110,7 @@ public class ProjectFragment extends Fragment {
                         Intent intent =  new Intent(getActivity().getApplicationContext(), ProjectDetailActivity.class);
                         intent.putExtra("ProjectViewModel", (Serializable) project);
                         startActivity(intent);
+                        CustomIntent.customType(getActivity(), "fadein-to-fadeout");
                     }
 
                     @Override
