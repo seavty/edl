@@ -29,9 +29,10 @@ import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
 import x_ware.com.edl.MainActivity;
 import x_ware.com.edl.R;
+import x_ware.com.edl.helpers.ApiErrorHelper;
+import x_ware.com.edl.helpers.ProgressDialogHelper;
 import x_ware.com.edl.networking.api.IAppointmentAPI;
 import x_ware.com.edl.helpers.DateTimeHelper;
-import x_ware.com.edl.helpers.Helper;
 import x_ware.com.edl.networking.models.appointment.AppointmentNewModel;
 import x_ware.com.edl.networking.models.appointment.AppointmentViewModel;
 import x_ware.com.edl.networking.RetrofitProvider;
@@ -51,26 +52,16 @@ public class AppointmentNewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_appointment_new);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         initializeComponents();
     }
 
     private void initializeComponents(){
-        progress = new ProgressDialog(this);
-        progress.setMessage("Loading...");
-        progress.setCancelable(false);
+        progress = ProgressDialogHelper.getInstance(this);
 
         txtSubject = findViewById(R.id.txtSubject);
         txtCommunicationDetails = findViewById(R.id.txtCommunicationDetails);
@@ -81,22 +72,22 @@ public class AppointmentNewActivity extends AppCompatActivity {
         imbEndTime = findViewById(R.id.imbEndTime);
         imbSave = findViewById(R.id.imbSave);
 
-
         spnAction = findViewById(R.id.spnAction);
-
 
         setUpSpinner();
         setUpEvent();
         clearData();
     }
 
-    private void setUpSpinner(){
+    private void setUpSpinner() {
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.spinner_action_array, R.layout.spinner_layout);
-// Specify the layout to use when the list of choices appears
+
+        // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(R.layout.spinner_layout);
-// Apply the adapter to the spinner
+
+        // Apply the adapter to the spinner
         spnAction.setAdapter(adapter);
     }
 
@@ -152,7 +143,7 @@ public class AppointmentNewActivity extends AppCompatActivity {
                         .observeOn(AndroidSchedulers.mainThread())
                         .doOnSubscribe(x -> progress.show())
                         .doOnComplete(() -> progress.dismiss())
-                        .subscribe(this::handleSaveResults, this::handleSaveError);
+                        .subscribe(this::handleSave, this::handleError);
             }
         }
         catch (Exception ex) {
@@ -161,7 +152,7 @@ public class AppointmentNewActivity extends AppCompatActivity {
     }
 
 
-
+    //-> validation
     private boolean validation(){
         txtSubject.setError(null);
         txtCommunicationDetails.setError(null);
@@ -189,6 +180,7 @@ public class AppointmentNewActivity extends AppCompatActivity {
         return true;
     }
 
+    //-> datePicker
     private void datePicker(final EditText txtDtp){
         final Calendar c = Calendar.getInstance();
         int mYear = c.get(Calendar.YEAR);
@@ -204,7 +196,7 @@ public class AppointmentNewActivity extends AppCompatActivity {
                         //api >= 21 time picker show only one time
                         //but api < 21 time picker show two time so we need to use this trick
                         if(count == 0) {
-                            timePicker(txtDtp, Helper.DDMMYYYY(year, (month+1), day)); // tmp comment
+                            timePicker(txtDtp, DateTimeHelper.get_dd_mm_yyy(year, (month+1), day)); // tmp comment
                             count++;
                         }
                         else {
@@ -215,6 +207,7 @@ public class AppointmentNewActivity extends AppCompatActivity {
         dpd.show();
     }
 
+    //-> timePicker
     private void timePicker(final EditText txt, String dateStr){
         final Calendar c = Calendar.getInstance();
         int mHour = c.get(Calendar.HOUR);
@@ -230,34 +223,30 @@ public class AppointmentNewActivity extends AppCompatActivity {
         tpd.show();
     }
 
-
-    private void handleSaveResults(Response<AppointmentViewModel> response) {
-        Log.d(TAG, "handleResults: " + response.code());
-
+    //-> handleSave
+    private void handleSave(Response<AppointmentViewModel> response) {
         switch (response.code()) {
             case 200:
-                Log.d(TAG, "handleSaveResults: ");
                 Toast.makeText(this, "Successfully created appointment", Toast.LENGTH_SHORT).show();
                 clearData();
                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
-
-                //clearData();
                 break;
             case 500:
-                Helper.error500(getApplicationContext());
+                ApiErrorHelper.statusCode500(getApplicationContext());
                 break;
 
             default:
-                Helper.error500(getApplicationContext());
+                ApiErrorHelper.statusCode500(getApplicationContext());
                 break;
         }
     }
     //-> handleError
-    private void handleSaveError(Throwable t){
+    private void handleError(Throwable t){
         progress.dismiss();
-        //Helper.reuqestError(getApplicationContext(), TAG, t);
+        ApiErrorHelper.unableConnectToServer(this, TAG, t);
     }
 
+    //-> clearData
     private void clearData(){
         txtSubject.setText("");
         txtCommunicationDetails.setText("");

@@ -26,8 +26,8 @@ import retrofit2.Call;
 import retrofit2.Response;
 import x_ware.com.edl.R;
 import x_ware.com.edl.adapters.project.ProjectAdapter;
+import x_ware.com.edl.helpers.ApiErrorHelper;
 import x_ware.com.edl.networking.api.IProjectAPI;
-import x_ware.com.edl.helpers.Helper;
 import x_ware.com.edl.interfaces.IRecyclerViewClickListener;
 import x_ware.com.edl.networking.models.GetListModel;
 import x_ware.com.edl.networking.models.project.ProjectViewModel;
@@ -40,13 +40,8 @@ public class ProjectFragment extends Fragment {
 
     private static final String TAG = "ProjectFragment";
     private int currentPage = 1;
-    private IProjectAPI projectAPI;
-    private Call<GetListModel<ProjectViewModel>> projectCall;
 
     private ProgressDialog progress;
-    private Subscription subscription;
-    private CompositeDisposable compositeDisposable;
-
     private RecyclerView.Adapter projectAdapter;
     private RecyclerView rcvProject;
 
@@ -59,17 +54,14 @@ public class ProjectFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        //return inflater.inflate(R.layout.fragment_project, container, false);
         View view = inflater.inflate(R.layout.fragment_project, container, false);
         initializeComponents(view);
         return view;
     }
 
-    // *** private methods *** /
+
 
     //-> initializeComponents()
-
     private void initializeComponents(View view){
         progress = new ProgressDialog(getActivity());
         progress.setMessage("Loading...");
@@ -124,7 +116,7 @@ public class ProjectFragment extends Fragment {
                 break;
 
             case 500:
-                Helper.error500(getActivity().getApplicationContext());
+                ApiErrorHelper.statusCode500(getActivity().getApplicationContext());
                 break;
 
         }
@@ -133,7 +125,7 @@ public class ProjectFragment extends Fragment {
     //-> handleError
     private void handleError(Throwable t){
         progress.dismiss();
-        Helper.reuqestError(getActivity().getApplicationContext(), TAG, t);
+        ApiErrorHelper.unableConnectToServer(getActivity().getBaseContext(), TAG, t);
     }
 
 }

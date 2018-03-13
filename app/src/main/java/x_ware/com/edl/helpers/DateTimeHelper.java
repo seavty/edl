@@ -4,6 +4,9 @@ package x_ware.com.edl.helpers;
  * Created by buneavros on 3/7/18.
  */
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 public class DateTimeHelper {
 
     public static String time_HH_MM(int hour, int minute){
@@ -36,5 +39,25 @@ public class DateTimeHelper {
         String useTime = time[0] + ":" + time[1];
 
         return useDate + " " + useTime;
+    }
+
+
+    public static String get_dd_mm_yyy(int year, int month, int day){
+        String m = ( month < 10) ? "0" + month: month + "";
+        String d = (day  < 10) ? "0" + day: day +"";
+        return d + "-" + m + "-" + year;
+    }
+
+    public static String get_CurrentDate_dd_mm_yyyy(){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        Calendar now = Calendar.getInstance();
+        String nowDate= sdf.format(now.getTime());
+        return nowDate;
+    }
+
+    public static String  get_yyyy_mm_dd(int year, int month, int day){
+        String m = ( month < 9) ? "0" + month: month + "";
+        String d = (day  < 9) ? "0" + day: day +"";
+        return year + "-" + m + "-" + d;
     }
 }

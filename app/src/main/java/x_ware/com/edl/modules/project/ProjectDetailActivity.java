@@ -54,21 +54,8 @@ public class ProjectDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_project_detail);
 
         initializeComponents();
-
-
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
-
-
     }
 
-    // *** private methods *** /
     //-> initializeComponents()
     private void initializeComponents(){
         toolbar = findViewById(R.id.toolbar);
@@ -88,7 +75,6 @@ public class ProjectDetailActivity extends AppCompatActivity {
 
         lblProjectName = findViewById(R.id.lblProjectName);
 
-
         if(getIntent() != null && getIntent().hasExtra("ProjectViewModel")) {
             project = (ProjectViewModel) getIntent().getSerializableExtra("ProjectViewModel");
             lblProjectName.setText(project.description);
@@ -98,9 +84,9 @@ public class ProjectDetailActivity extends AppCompatActivity {
 
     private void setupViewPager() {
         myAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        myAdapter.addFragments(new ProjectCompanyFragment(), "comp");
-        myAdapter.addFragments(new ProjectSpecificationFragment(), "Spec");
-        myAdapter.addFragments(new ProjectCommunicationFragment(), "Comm");
+        myAdapter.addFragments(new ProjectCompanyFragment(), "Company");
+        myAdapter.addFragments(new ProjectSpecificationFragment(), "Specification");
+        myAdapter.addFragments(new ProjectCommunicationFragment(), "Communication");
         mViewPager.setAdapter(myAdapter);
     }
 
@@ -110,7 +96,6 @@ public class ProjectDetailActivity extends AppCompatActivity {
         tabLayout.getTabAt(1).setIcon(tabIcons[1]);
         tabLayout.getTabAt(2).setIcon(tabIcons[2]);
     }
-
 
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
@@ -133,6 +118,4 @@ public class ProjectDetailActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-
 }

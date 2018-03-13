@@ -30,7 +30,6 @@ import x_ware.com.edl.adapters.appointment.AppointmentAdapter;
 import x_ware.com.edl.networking.api.IAppointmentAPI;
 import x_ware.com.edl.helpers.ApiErrorHelper;
 import x_ware.com.edl.helpers.DateTimeHelper;
-import x_ware.com.edl.helpers.Helper;
 import x_ware.com.edl.helpers.ProgressDialogHelper;
 import x_ware.com.edl.interfaces.IRecyclerViewClickListener;
 import x_ware.com.edl.networking.models.GetListModel;
@@ -43,6 +42,7 @@ import x_ware.com.edl.networking.RetrofitProvider;
 public class AppointmentFragment extends Fragment {
 
     private static final String TAG = "AppointmentFragment";
+
     private int currentPage = 1;
     private ProgressDialog progress;
 
@@ -79,7 +79,7 @@ public class AppointmentFragment extends Fragment {
         progress = ProgressDialogHelper.getInstance(getActivity());
 
         txtDate = view.findViewById(R.id.txtDate);
-        txtDate.setText(Helper.getCurrentDateOnly());
+        txtDate.setText(DateTimeHelper.get_CurrentDate_dd_mm_yyyy());
         txtDate.setEnabled(false);
         txtDate.setTextColor(Color.BLACK);
 
@@ -108,35 +108,6 @@ public class AppointmentFragment extends Fragment {
         });
     }
 
-    //-> newAppointment
-    private void newAppointment() {
-        Intent intent = new Intent(getActivity().getApplicationContext(), AppointmentNewActivity.class);
-        startActivity(intent);
-    }
-
-    //-> openCalendarDialog
-    private void openCalendarDialog(){
-        dtp(txtDate);
-    }
-
-    //-> dtp
-    private void dtp(final EditText txtDtp){
-        final Calendar c = Calendar.getInstance();
-        int mYear = c.get(Calendar.YEAR);
-        int mMonth = c.get(Calendar.MONTH);
-        int mDay = c.get(Calendar.DAY_OF_MONTH);
-        DatePickerDialog dpd = new DatePickerDialog(getActivity(),
-                new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int day) {
-                        txtDtp.setText(Helper.DDMMYYYY(year, (month+1), day));
-                        getAppointments();
-
-                    }
-                }, mYear, mMonth, mDay);
-        dpd.show();
-    }
-
     //-> getAppointments
     private void getAppointments(){
         try {
@@ -145,7 +116,7 @@ public class AppointmentFragment extends Fragment {
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe(x -> progress.show())
                     .doOnComplete(() -> progress.dismiss())
-                    .subscribe(this::handleGetAppointmentsResults, this::handleGetAppointmentsError);
+                    .subscribe(this::handleGetAppointments, this::handleError);
         }
         catch (Exception ex) {
             Log.d(TAG, "getAppointment: " + ex.getMessage());
@@ -153,7 +124,7 @@ public class AppointmentFragment extends Fragment {
     }
 
     //-> handleGetAppointmentsResults
-    private void handleGetAppointmentsResults(Response<GetListModel<AppointmentViewModel>> response){
+    private void handleGetAppointments(Response<GetListModel<AppointmentViewModel>> response){
         switch (response.code()) {
             case 200:
                 IRecyclerViewClickListener listener = new IRecyclerViewClickListener() {
@@ -179,14 +150,44 @@ public class AppointmentFragment extends Fragment {
                 break;
 
             default:
-                ApiErrorHelper.error500(getActivity().getApplicationContext());
+                ApiErrorHelper.statusCode500(getActivity().getApplicationContext());
                 break;
         }
     }
 
-    //-> handleGetAppointmentsError
-    private void handleGetAppointmentsError(Throwable t){
+    //-> newAppointment
+    private void newAppointment() {
+        Intent intent = new Intent(getActivity().getApplicationContext(), AppointmentNewActivity.class);
+        startActivity(intent);
+    }
+
+    //-> openCalendarDialog
+    private void openCalendarDialog(){
+        dtp(txtDate);
+    }
+
+    //-> dtp
+    private void dtp(final EditText txtDtp){
+        final Calendar c = Calendar.getInstance();
+        int mYear = c.get(Calendar.YEAR);
+        int mMonth = c.get(Calendar.MONTH);
+        int mDay = c.get(Calendar.DAY_OF_MONTH);
+        DatePickerDialog dpd = new DatePickerDialog(getActivity(),
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int day) {
+                        txtDtp.setText(DateTimeHelper.get_dd_mm_yyy(year, (month+1), day));
+                        getAppointments();
+
+                    }
+                }, mYear, mMonth, mDay);
+        dpd.show();
+    }
+
+    //-> handleError
+    private void handleError(Throwable t){
         progress.dismiss();
+        ApiErrorHelper.unableConnectToServer(getActivity().getBaseContext(), TAG, t);
     }
 
 }

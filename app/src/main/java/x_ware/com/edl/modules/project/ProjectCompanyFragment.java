@@ -22,8 +22,9 @@ import retrofit2.Call;
 import retrofit2.Response;
 import x_ware.com.edl.R;
 import x_ware.com.edl.adapters.project.ProjectCompanyAdapter;
+import x_ware.com.edl.helpers.ApiErrorHelper;
+import x_ware.com.edl.helpers.ProgressDialogHelper;
 import x_ware.com.edl.networking.api.IProjectAPI;
-import x_ware.com.edl.helpers.Helper;
 import x_ware.com.edl.interfaces.IRecyclerViewClickListener;
 import x_ware.com.edl.networking.models.GetListModel;
 import x_ware.com.edl.networking.models.project.ProjectCompanyViewModel;
@@ -36,13 +37,10 @@ import x_ware.com.edl.networking.RetrofitProvider;
 public class ProjectCompanyFragment extends Fragment {
 
     private static final String TAG = "ProjectCompanyFragment";
+
     private int currentPage = 1;
-    private Call<GetListModel<ProjectCompanyViewModel>> projectCompanyCall;
 
     private ProgressDialog progress;
-    private Subscription subscription;
-    private CompositeDisposable compositeDisposable;
-
     private RecyclerView.Adapter projectCompanyAdapter;
     private RecyclerView rcvProjectCompany;
 
@@ -57,9 +55,6 @@ public class ProjectCompanyFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        //return inflater.inflate(R.layout.fragment_project_company, container, false);
-
         View view = inflater.inflate(R.layout.fragment_project_company, container, false);
         initializeComponents(view);
         getProjectCompanies();
@@ -69,30 +64,26 @@ public class ProjectCompanyFragment extends Fragment {
     //private methods
     //-> initializeComponents()
     private void initializeComponents(View view){
-        progress = new ProgressDialog(getActivity());
-        progress.setMessage("Loading...");
-        progress.setCancelable(false);
+        progress = ProgressDialogHelper.getInstance(getActivity());
 
-        rcvProjectCompany = ((RecyclerView) view.findViewById(R.id.rcvProjectCompany));
+        rcvProjectCompany = view.findViewById(R.id.rcvProjectCompany);
         rcvProjectCompany.setHasFixedSize(true);
         rcvProjectCompany.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
 
         if(getActivity().getIntent() != null && getActivity().getIntent().hasExtra("ProjectViewModel")) {
             project = (ProjectViewModel) getActivity().getIntent().getSerializableExtra("ProjectViewModel");
         }
-
-        Log.d(TAG, "initializeComponents: " + TAG);
     }
 
     //-> getProjectCompanies()
     private void getProjectCompanies(){
         try {
-            RetrofitProvider.get().create(IProjectAPI.class).getProjectCompanies(project.id, 1)
+            RetrofitProvider.get().create(IProjectAPI.class).getProjectCompanies(project.id, currentPage)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe(x -> progress.show())
                     .doOnComplete(() -> progress.dismiss())
-                    .subscribe(this::handleResults, this::handleError);
+                    .subscribe(this::handleGetProjectCompanies, this::handleError);
         }
         catch (Exception ex) {
             Log.d(TAG, "getProjectCompanies: " + ex.getMessage());
@@ -100,16 +91,13 @@ public class ProjectCompanyFragment extends Fragment {
     }
 
     //-> handleResults
-    private void handleResults(Response<GetListModel<ProjectCompanyViewModel>> response){
-        Log.d(TAG, "handleResults: " + response.code());
-
+    private void handleGetProjectCompanies(Response<GetListModel<ProjectCompanyViewModel>> response){
         switch (response.code()) {
             case 200:
                 IRecyclerViewClickListener listener = new IRecyclerViewClickListener() {
                     @Override
                     public void onClick(View view, int position, Object obj) {
                         Log.d(TAG, "onClick: " + position);
-                        //startActivity(new Intent(getApplicationContext(), ProjectDetailActivity.class));
                     }
 
                     @Override
@@ -124,17 +112,14 @@ public class ProjectCompanyFragment extends Fragment {
                 break;
 
             case 500:
-                Helper.error500(getActivity().getApplicationContext());
+                ApiErrorHelper.statusCode500(getActivity().getApplicationContext());
                 break;
         }
-
     }
 
     //-> handleError
     private void handleError(Throwable t){
         progress.dismiss();
-        Helper.reuqestError(getActivity().getApplicationContext(), TAG, t);
+        ApiErrorHelper.unableConnectToServer(getActivity().getBaseContext(), TAG, t);
     }
-
-
 }

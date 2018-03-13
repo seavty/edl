@@ -4,13 +4,10 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -32,65 +29,44 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
-import x_ware.com.edl.MainActivity;
 import x_ware.com.edl.R;
+import x_ware.com.edl.helpers.ApiErrorHelper;
 import x_ware.com.edl.helpers.DateTimeHelper;
 import x_ware.com.edl.networking.api.IAppointmentAPI;
-import x_ware.com.edl.helpers.Helper;
 import x_ware.com.edl.helpers.ProgressDialogHelper;
 import x_ware.com.edl.networking.models.appointment.AppointmentCheckInModel;
 import x_ware.com.edl.networking.models.appointment.AppointmentCheckOutModel;
 import x_ware.com.edl.networking.models.appointment.AppointmentEditDetailModel;
 import x_ware.com.edl.networking.models.appointment.AppointmentViewModel;
-import x_ware.com.edl.modules.project.ProjectActivity;
 import x_ware.com.edl.networking.RetrofitProvider;
-
-import static maes.tech.intentanim.CustomIntent.customType;
 
 public class AppointmentDetailActivity extends AppCompatActivity implements AppointmentDetailDialog.AppointmentDetailDialogListener {
     private static final String TAG = "AppointmentDetailActivi";
 
-    private int currentPage = 1;
     private ProgressDialog progress;
     private TextView lblTiming, lblCompanyName, lblPhoneNumber, lblSubject, lblDetail;
-    private Button btnGoToProject, btnCheckInOrCheckOut;
+    private Button btnCheckInOrCheckOut;
     private ImageButton imbEditSubject;
     private ImageView imgAction;
+
     private AppointmentViewModel appointment;
 
     static final int REQUEST_LOCATION = 1;
     private FusedLocationProviderClient mFusedLocationClient;
 
-    //my test location
-    //LocationRequest mLocationRequest;
-    //Location mLastLocation;
-    //FusedLocationProviderClient mFusedLocationClient_Test;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_appointment_detail);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
+        setContentView(R.layout.activity_appointment_detail);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Appointment Details");
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         initializeComponents();
     }
-
-    // *** private methods *** /
-
 
     //-> initializeComponents
     private void initializeComponents(){
@@ -99,10 +75,7 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
 
         setUpViews();
         setUpEvents();
-        getAppointments();
-
-        //locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        //getLocation();
+        getAppointment();
     }
 
     //-> setUpViews()
@@ -116,20 +89,13 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
         lblDetail =  findViewById(R.id.lblDetail);
 
         btnCheckInOrCheckOut = findViewById(R.id.btnCheckInOrCheckOut);
-        btnGoToProject = findViewById(R.id.btnGoToProject);
+
         imbEditSubject = findViewById(R.id.imbEditDetail);
         imgAction = findViewById(R.id.imgAction);
     }
 
     //-> setUpEvents
     private void setUpEvents() {
-        btnGoToProject.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goToProject();
-            }
-        });
-
         String myText = "check in";
         if(appointment.checkIncheckOut != null) {
             if (appointment.checkIncheckOut.equals("Checked In"))
@@ -162,24 +128,100 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
     }
 
     //-> getAppointment()
-    private void getAppointments(){
+    private void getAppointment(){
         try {
             RetrofitProvider.get(this).create(IAppointmentAPI.class).getAppointment(appointment.id)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe(x -> progress.show())
                     .doOnComplete(() -> progress.dismiss())
-                    .subscribe(this::handleResults, this::handleError);
+                    .subscribe(this::handleGetAppointment, this::handleError);
         }
         catch (Exception ex) {
             Log.d(TAG, "getAppointment: " + ex.getMessage());
         }
     }
 
+    //-> handleGetAppointment
+    private void handleGetAppointment(Response<AppointmentViewModel> response) {
+        switch (response.code()) {
+            case 200:
+                appointment = response.body();
+                displayData();
+                break;
+
+            case 404:
+                ApiErrorHelper.statusCode404(getApplicationContext());
+                break;
+
+            case 500:
+                ApiErrorHelper.statusCode500(getApplicationContext());
+                break;
+
+            default:
+                ApiErrorHelper.statusCode500(getApplicationContext());
+                break;
+        }
+    }
+
+    //-> handleError
+    private void handleError(Throwable t){
+        progress.dismiss();
+        ApiErrorHelper.unableConnectToServer(this, TAG, t);
+    }
+
+    //-> displayData()
+    private void displayData(){
+        imbEditSubject.setVisibility(View.INVISIBLE);
+        lblTiming.setText(DateTimeHelper.convert_yyyy_mm_dd_t_hh_mm_ss_To_dd_mm_yyy_hh_mm(appointment.timing));
+        lblCompanyName.setText(appointment.companyName);
+        lblPhoneNumber.setText(appointment.phoneNumber);
+        lblSubject.setText(appointment.subject);
+        lblDetail.setText(appointment.details);
+
+        if(appointment.checkIncheckOut != null) {
+            if(appointment.checkIncheckOut.equals("Checked In")) {
+                btnCheckInOrCheckOut.setText("Check Out");
+                imbEditSubject.setVisibility(View.VISIBLE);
+            }
+
+            if(appointment.checkIncheckOut.equals("Checked Out"))
+                btnCheckInOrCheckOut.setEnabled(false);
+        }
+        displayDrawable(appointment.action);
+    }
+
+    //-> displayDrawable
+    private void displayDrawable(String action) {
+        switch (action){
+            case "Delivery":
+                imgAction.setImageDrawable(this.getResources().getDrawable(R.drawable.delivery));
+                break;
+            case "Presentation":
+                imgAction.setImageDrawable(this.getResources().getDrawable(R.drawable.presentation));
+                break;
+            case "SampleRequest":
+                imgAction.setImageDrawable(this.getResources().getDrawable(R.drawable.sample_request));
+                break;
+            case "SalesVisit":
+                imgAction.setImageDrawable(this.getResources().getDrawable(R.drawable.sales_visit));
+                break;
+            default:
+                imgAction.setImageDrawable(this.getResources().getDrawable(R.drawable.presentation));
+                break;
+        }
+    }
+
+    //-> openDetailDialog
+    private void openDetailDialog(){
+        AppointmentDetailDialog detailDialog = new AppointmentDetailDialog();
+        detailDialog.appointment = appointment;
+        detailDialog.show(getSupportFragmentManager(), "detailDialog");
+    }
 
     //-> locationPermission
     private boolean locationPermission(){
-        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
@@ -208,10 +250,9 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
                             public void onSuccess(Location location) {
                                 // GPS location can be null if GPS is switched off
                                 if (location != null) {
-                                   Log.d(TAG, "onSuccess: " + location.getLatitude());
-                                   Log.d(TAG, "onSuccess: " + location.getLongitude());
-                                }
-                                else {
+                                    Log.d(TAG, "onSuccess: " + location.getLatitude());
+                                    Log.d(TAG, "onSuccess: " + location.getLongitude());
+                                } else {
                                     Toast.makeText(AppointmentDetailActivity.this, "Unable to get your current location", Toast.LENGTH_SHORT).show();
 
                                 }
@@ -230,8 +271,6 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
             Log.d(TAG, "getLocation: " + ex.getMessage());
         }
     }
-
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -271,16 +310,13 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
     //-> checkInOrCheckOut
     private void checkInOrCheckOut() {
         try {
-            Log.d(TAG, "checkInOrCheckOut: " + appointment.checkIncheckOut);
-
-            if(locationPermission()) {
+            if (locationPermission()) {
                 if (appointment.checkIncheckOut == null)
                     checkIn();
                 else
                     checkOut();
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             Log.d(TAG, "Exception: " + ex.getMessage());
         }
     }
@@ -294,8 +330,6 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
                     public void onSuccess(Location location) {
                         // GPS location can be null if GPS is switched off
                         if (location != null) {
-                            Log.d(TAG, "onSuccess: " + location.getLatitude());
-                            Log.d(TAG, "onSuccess: " + location.getLongitude());
                             AppointmentCheckOutModel checkout = new AppointmentCheckOutModel();
                             checkout.id = appointment.id;
                             checkout.latitude = location.getLatitude();
@@ -305,7 +339,7 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .doOnSubscribe(x -> progress.show())
                                     .doOnComplete(() -> progress.dismiss())
-                                    .subscribe(AppointmentDetailActivity.this::handleCheckInOrCheckOutResults, AppointmentDetailActivity.this::handleCheckInError);
+                                    .subscribe(AppointmentDetailActivity.this::handleCheckInOrCheckOut, AppointmentDetailActivity.this::handleError);
 
                         } else {
                             Toast.makeText(AppointmentDetailActivity.this, "Unable to get your current location", Toast.LENGTH_SHORT).show();
@@ -324,7 +358,6 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
 
     //-> checkIn
     private void checkIn() {
-
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mFusedLocationClient.getLastLocation()
                 .addOnSuccessListener(new OnSuccessListener<Location>() {
@@ -332,8 +365,6 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
                     public void onSuccess(Location location) {
                         // GPS location can be null if GPS is switched off
                         if (location != null) {
-                            Log.d(TAG, "onSuccess: " + location.getLatitude());
-                            Log.d(TAG, "onSuccess: " + location.getLongitude());
                             AppointmentCheckInModel checkInModel = new AppointmentCheckInModel();
                             checkInModel.id = appointment.id;
                             checkInModel.latitude = location.getLatitude();
@@ -343,7 +374,7 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .doOnSubscribe(x -> progress.show())
                                     .doOnComplete(() -> progress.dismiss())
-                                    .subscribe(AppointmentDetailActivity.this::handleCheckInOrCheckOutResults, AppointmentDetailActivity.this::handleCheckInError);
+                                    .subscribe(AppointmentDetailActivity.this::handleCheckInOrCheckOut, AppointmentDetailActivity.this::handleError);
 
                         } else {
                             Toast.makeText(AppointmentDetailActivity.this, "Unable to get your current location", Toast.LENGTH_SHORT).show();
@@ -360,127 +391,25 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
                 });
     }
 
-    //-> handleCheckInOrCheckOutResults
-    private void handleCheckInOrCheckOutResults(Response<AppointmentViewModel> response) {
-        Log.d(TAG, "handleResults: " + response.code());
-
+    //-> handleCheckInOrCheckOut
+    private void handleCheckInOrCheckOut(Response<AppointmentViewModel> response) {
         switch (response.code()) {
             case 200:
                 appointment = response.body();
                 displayData();
                 break;
             case 500:
-                Helper.error500(getApplicationContext());
+                ApiErrorHelper.statusCode500(getApplicationContext());
                 break;
 
             default:
-                Helper.error500(getApplicationContext());
+                ApiErrorHelper.statusCode500(getApplicationContext());
                 break;
         }
     }
-    //-> handleCheckInError
-    private void handleCheckInError(Throwable t){
-        progress.dismiss();
-        //Helper.reuqestError(getApplicationContext(), TAG, t);
-    }
-
-
-
-
-    private void openDetailDialog(){
-        AppointmentDetailDialog detailDialog = new AppointmentDetailDialog();
-        detailDialog.appointment = appointment;
-        detailDialog.show(getSupportFragmentManager(), "detailDialog");
-    }
-
-
-    private void goToProject(){
-        Intent intent = new Intent(this, ProjectActivity.class);
-        //intent.putExtra("AppointmentViewModel", (Serializable) appointment);
-        startActivity(intent);
-    }
-
-
-
-    //-> handleResults
-    private void handleResults(Response<AppointmentViewModel> response) {
-        Log.d(TAG, "handleResults: " + response.code());
-
-        switch (response.code()) {
-            case 200:
-                appointment = response.body();
-                displayData();
-                break;
-
-            case 404:
-                Helper.notFound404(getApplicationContext());
-                break;
-
-            case 500:
-                Helper.error500(getApplicationContext());
-                break;
-
-            default:
-                Helper.error500(getApplicationContext());
-                break;
-        }
-    }
-
-    //-> handleError
-    private void handleError(Throwable t){
-        progress.dismiss();
-        Helper.reuqestError(getApplicationContext(), TAG, t);
-    }
-
-    private void displayData(){
-        Log.d(TAG, "displayData:" + appointment.checkIncheckOut);
-
-        imbEditSubject.setVisibility(View.INVISIBLE);
-        lblTiming.setText(DateTimeHelper.convert_yyyy_mm_dd_t_hh_mm_ss_To_dd_mm_yyy_hh_mm(appointment.timing));
-        lblCompanyName.setText(appointment.companyName);
-        lblPhoneNumber.setText(appointment.phoneNumber);
-        lblSubject.setText(appointment.subject);
-        lblDetail.setText(appointment.details);
-
-        if(appointment.checkIncheckOut != null) {
-            if(appointment.checkIncheckOut.equals("Checked In")) {
-                btnCheckInOrCheckOut.setText("Check Out");
-                imbEditSubject.setVisibility(View.VISIBLE);
-            }
-        }
-
-        if(appointment.checkIncheckOut != null){
-            if(appointment.checkIncheckOut.equals("Checked Out")) {
-                btnCheckInOrCheckOut.setEnabled(false);
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-
-            }
-        }
-
-        switch (appointment.action){
-            case "Delivery":
-                imgAction.setImageDrawable(this.getResources().getDrawable(R.drawable.delivery));
-                break;
-            case "Presentation":
-                imgAction.setImageDrawable(this.getResources().getDrawable(R.drawable.presentation));
-                break;
-            case "SampleRequest":
-                imgAction.setImageDrawable(this.getResources().getDrawable(R.drawable.sample_request));
-                break;
-            case "SalesVisit":
-                imgAction.setImageDrawable(this.getResources().getDrawable(R.drawable.sales_visit));
-                break;
-                default:
-                    imgAction.setImageDrawable(this.getResources().getDrawable(R.drawable.presentation));
-                    break;
-        }
-    }
-
 
     @Override
     public void onComplete(AppointmentViewModel appointment) {
-        Log.d(TAG, "onComplete: " + appointment.details);
-
         AppointmentEditDetailModel editDetail = new AppointmentEditDetailModel();
         editDetail.id = appointment.id;
         editDetail.details = appointment.details;
@@ -489,30 +418,23 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(x -> progress.show())
                 .doOnComplete(() -> progress.dismiss())
-                .subscribe(this::handleEditDetailResults, this::handleEditDetailError);
+                .subscribe(this::handleEditDetail, this::handleError);
     }
 
-    private void handleEditDetailResults(Response<AppointmentViewModel> response) {
-        Log.d(TAG, "handleResults: " + response.code());
-
+    //-> handleEditDetail
+    private void handleEditDetail(Response<AppointmentViewModel> response) {
         switch (response.code()) {
             case 200:
                 appointment = response.body();
                 displayData();
                 break;
             case 500:
-                Helper.error500(getApplicationContext());
+                ApiErrorHelper.statusCode500(getApplicationContext());
                 break;
 
             default:
-                Helper.error500(getApplicationContext());
+                ApiErrorHelper.statusCode500(getApplicationContext());
                 break;
         }
-    }
-
-    //-> handleError
-    private void handleEditDetailError(Throwable t){
-        progress.dismiss();
-        Helper.reuqestError(getApplicationContext(), TAG, t);
     }
 }

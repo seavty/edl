@@ -35,20 +35,10 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Login");
-
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
 
         initializeComponents();
     }
@@ -115,15 +105,15 @@ public class LoginActivity extends AppCompatActivity {
                         .observeOn(AndroidSchedulers.mainThread())
                         .doOnSubscribe(x -> progress.show())
                         .doOnComplete(() -> progress.dismiss())
-                        .subscribe(this::handleLoginResults, this::handleLoginError);
+                        .subscribe(this::handleLogin, this::handleError);
             } catch (Exception ex) {
                 Log.d(TAG, "login: " + ex.getMessage());
             }
         }
     }
 
-    //-> handleLoginResults
-    private void handleLoginResults(Response<UserModel> response) {
+    //-> handleLogin
+    private void handleLogin(Response<UserModel> response) {
         switch (response.code()) {
             case 200:
                 PreferenceHelper.setSerializeObject(LoginActivity.this, PreferenceKeyHelper.User, response.body());
@@ -135,13 +125,13 @@ public class LoginActivity extends AppCompatActivity {
                 break;
 
             default:
-                ApiErrorHelper.error500(getApplicationContext());
+                ApiErrorHelper.statusCode500(getApplicationContext());
                 break;
         }
     }
 
-    //-> handleLoginError
-    private void handleLoginError(Throwable t){
+    //-> handleError
+    private void handleError(Throwable t){
         progress.dismiss();
         ApiErrorHelper.unableConnectToServer(this, TAG, t);
     }

@@ -19,7 +19,7 @@ import android.widget.DatePicker;
 import java.util.Calendar;
 
 import x_ware.com.edl.dialogs.DatePickerDialogFragment;
-import x_ware.com.edl.helpers.Helper;
+import x_ware.com.edl.helpers.DateTimeHelper;
 import x_ware.com.edl.modules.appointment.AppointmentFragment;
 import x_ware.com.edl.modules.auth.LoginActivity;
 import x_ware.com.edl.modules.project.ProjectFragment;
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
-        goToAppointmentFragment(Helper.YYYYMMDD(year, (month+1), day));
+        goToAppointmentFragment(DateTimeHelper.get_dd_mm_yyy(year, (month+1), day));
     }
 
     @Override
@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
-        goToAppointmentFragment(Helper.YYYYMMDD(i, (i1+1), i2));
+        goToAppointmentFragment(DateTimeHelper.get_yyyy_mm_dd(i, (i1+1), i2));
     }
 
     private void goToAppointmentFragment(String date){

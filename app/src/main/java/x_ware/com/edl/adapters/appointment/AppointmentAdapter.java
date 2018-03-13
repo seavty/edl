@@ -15,7 +15,6 @@ import java.util.List;
 
 import x_ware.com.edl.R;
 import x_ware.com.edl.helpers.DateTimeHelper;
-import x_ware.com.edl.helpers.Helper;
 import x_ware.com.edl.interfaces.IRecyclerViewClickListener;
 import x_ware.com.edl.networking.models.appointment.AppointmentViewModel;
 import x_ware.com.edl.modules.project.ProjectActivity;

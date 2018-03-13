@@ -15,7 +15,13 @@ public class ApiErrorHelper {
         Toast.makeText(context, "Unable connect to server." , Toast.LENGTH_SHORT).show();
     }
 
-    public static void error500(Context context){
+    public static void statusCode500(Context context){
         Toast.makeText(context, "Error occurred while processing your request!" , Toast.LENGTH_SHORT).show();
     }
+
+    public static void statusCode404(Context con){
+        Toast.makeText(con, "Not found!" , Toast.LENGTH_SHORT).show();
+    }
+
+
 }

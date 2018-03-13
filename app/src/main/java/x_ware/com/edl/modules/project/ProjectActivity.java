@@ -24,8 +24,8 @@ import retrofit2.Call;
 import retrofit2.Response;
 import x_ware.com.edl.R;
 import x_ware.com.edl.adapters.project.ProjectAdapter;
+import x_ware.com.edl.helpers.ApiErrorHelper;
 import x_ware.com.edl.networking.api.IProjectAPI;
-import x_ware.com.edl.helpers.Helper;
 import x_ware.com.edl.helpers.ProgressDialogHelper;
 import x_ware.com.edl.interfaces.IRecyclerViewClickListener;
 import x_ware.com.edl.networking.models.GetListModel;
@@ -35,13 +35,9 @@ import x_ware.com.edl.networking.RetrofitProvider;
 
 public class ProjectActivity extends AppCompatActivity {
     private static final String TAG = "ProjectActivity";
-    private int currentPage = 1;
-    private IProjectAPI projectAPI;
-    private Call<GetListModel<ProjectViewModel>> projectCall;
 
+    private int currentPage = 1;
     private ProgressDialog progress;
-    private Subscription subscription;
-    private CompositeDisposable compositeDisposable;
 
     private RecyclerView.Adapter projectAdapter;
     private RecyclerView rcvProject;
@@ -57,15 +53,6 @@ public class ProjectActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Project Listing");
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         initializeComponents();
@@ -101,7 +88,7 @@ public class ProjectActivity extends AppCompatActivity {
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe(x -> progress.show())
                     .doOnComplete(() -> progress.dismiss())
-                    .subscribe(this::handleGetProjectsResult, this::handleGetProjectsError);
+                    .subscribe(this::handleGetProjects, this::handleError);
         }
         catch (Exception ex) {
             Log.d(TAG, "getAppointments: " + ex.getMessage());
@@ -109,9 +96,7 @@ public class ProjectActivity extends AppCompatActivity {
     }
 
     //-> handleGetProjectsResult
-    private void handleGetProjectsResult(Response<GetListModel<ProjectViewModel>> response){
-        Log.d(TAG, "handleResults: " + response.code());
-
+    private void handleGetProjects(Response<GetListModel<ProjectViewModel>> response){
         switch (response.code()) {
             case 200:
                 IRecyclerViewClickListener listener = new IRecyclerViewClickListener() {
@@ -134,13 +119,14 @@ public class ProjectActivity extends AppCompatActivity {
                 break;
 
             case 500:
-                Helper.error500(this);
+                ApiErrorHelper.statusCode500(this);
                 break;
         }
     }
 
     //-> handleError
-    private void handleGetProjectsError(Throwable t){
+    private void handleError(Throwable t){
         progress.dismiss();
+        ApiErrorHelper.unableConnectToServer(this, TAG, t);
     }
 }
