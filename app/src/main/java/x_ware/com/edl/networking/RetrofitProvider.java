@@ -17,8 +17,8 @@ import x_ware.com.edl.networking.models.user.UserModel;
  */
 public class RetrofitProvider {
 
-    //public static final String baseURL = "http://192.168.0.3/edl/api/v1/"; //local
-    public static final String baseURL = "http://203.125.35.189/edl/api/v1/"; // SG server
+    public static final String baseURL = "http://192.168.0.3/edl/api/v1/"; //local
+    //public static final String baseURL = "http://203.125.35.189/edl/api/v1/"; // SG server
     //public static final String baseURL = "http://47.74.183.123/edl/api/v1/"; //alibabar server
 
     public static Retrofit get() {
