@@ -74,6 +74,8 @@ public class ProjectDetailActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        getSupportActionBar().setTitle("Project Details");
         mViewPager = findViewById(R.id.container);
         setupViewPager();
 

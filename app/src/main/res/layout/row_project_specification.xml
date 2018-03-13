@@ -40,7 +40,6 @@
                     android:id="@+id/lblRemarks"
                     android:text="Remarks Dummy"
                     android:textSize="@dimen/text_size_small"
-                    android:textColor="@color/black"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="left"/>
