@@ -35,45 +35,32 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Login");
-
         initializeComponents();
     }
 
     //-> initializeComponents
-    private void initializeComponents(){
+    private void initializeComponents() {
         setUpViews();
         setUpEvents();
     }
 
     //-> setUpViews
     private void setUpViews() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Login");
+
         progress = ProgressDialogHelper.getInstance(this);
         txtUserName = findViewById(R.id.txtUserName);
         txtPassword = findViewById(R.id.txtPassword);
         btnLogin = findViewById(R.id.btnLogin);
         btnClear = findViewById(R.id.btnClear);
-
     }
 
     //-> setUpEvents
     private void setUpEvents() {
-        btnClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                clear();
-            }
-        });
-
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                login();
-            }
-        });
+        btnClear.setOnClickListener(view -> clear());
+        btnLogin.setOnClickListener(view -> login());
     }
 
     //-> clear
@@ -84,18 +71,18 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     //-> validation
-    private boolean validation(){
+    private boolean validation() {
         txtUserName.setError(null);
-        if(txtUserName.getText().toString().trim().isEmpty()) {
-            txtUserName.setError( "User name is required!" );
+        if (txtUserName.getText().toString().trim().isEmpty()) {
+            txtUserName.setError("User name is required!");
             return false;
         }
         return true;
     }
 
     //-> login
-    private void login(){
-        if(validation()) {
+    private void login() {
+        if (validation()) {
             try {
                 UserLoginModel user = new UserLoginModel();
                 user.userName = txtUserName.getText().toString().trim();
@@ -117,7 +104,8 @@ public class LoginActivity extends AppCompatActivity {
         switch (response.code()) {
             case 200:
                 PreferenceHelper.setSerializeObject(LoginActivity.this, PreferenceKeyHelper.User, response.body());
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                startActivity(new Intent(this, MainActivity.class));
+                finish();
                 break;
 
             case 404:
@@ -125,13 +113,13 @@ public class LoginActivity extends AppCompatActivity {
                 break;
 
             default:
-                ApiErrorHelper.statusCode500(getApplicationContext());
+                ApiErrorHelper.statusCode500(this);
                 break;
         }
     }
 
     //-> handleError
-    private void handleError(Throwable t){
+    private void handleError(Throwable t) {
         progress.dismiss();
         ApiErrorHelper.unableConnectToServer(this, TAG, t);
     }

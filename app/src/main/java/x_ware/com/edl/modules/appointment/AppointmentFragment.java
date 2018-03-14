@@ -57,7 +57,6 @@ public class AppointmentFragment extends Fragment {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -66,9 +65,8 @@ public class AppointmentFragment extends Fragment {
         return view;
     }
 
-
     //-> initializeComponents
-    private void initializeComponents(View view){
+    private void initializeComponents(View view) {
         setUpViews(view);
         setUpEvents();
         getAppointments();
@@ -86,30 +84,19 @@ public class AppointmentFragment extends Fragment {
         imbCalendar = view.findViewById(R.id.imbCalendar);
         imbNewAppointment = view.findViewById(R.id.imbNewAppointment);
 
-        rcvAppointment =  view.findViewById(R.id.rcvAppointment);
+        rcvAppointment = view.findViewById(R.id.rcvAppointment);
         rcvAppointment.setHasFixedSize(true);
         rcvAppointment.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
     //-> setUpEvents
     private void setUpEvents() {
-        imbCalendar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openCalendarDialog();
-            }
-        });
-
-        imbNewAppointment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                newAppointment();
-            }
-        });
+        imbCalendar.setOnClickListener(view -> openCalendarDialog());
+        imbNewAppointment.setOnClickListener(view -> newAppointment());
     }
 
     //-> getAppointments
-    private void getAppointments(){
+    private void getAppointments() {
         try {
             RetrofitProvider.get(getActivity().getBaseContext()).create(IAppointmentAPI.class).searchAppointments(currentPage, DateTimeHelper.convert_dd_mm_yyyy_To_yyyy_mm_dd(txtDate.getText().toString()))
                     .subscribeOn(Schedulers.io())
@@ -117,24 +104,22 @@ public class AppointmentFragment extends Fragment {
                     .doOnSubscribe(x -> progress.show())
                     .doOnComplete(() -> progress.dismiss())
                     .subscribe(this::handleGetAppointments, this::handleError);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             Log.d(TAG, "getAppointment: " + ex.getMessage());
         }
     }
 
-    //-> handleGetAppointmentsResults
-    private void handleGetAppointments(Response<GetListModel<AppointmentViewModel>> response){
+    //-> handleGetAppointments
+    private void handleGetAppointments(Response<GetListModel<AppointmentViewModel>> response) {
         switch (response.code()) {
             case 200:
                 IRecyclerViewClickListener listener = new IRecyclerViewClickListener() {
                     @Override
                     public void onClick(View view, int position, Object obj) {
-                        Log.d(TAG, "onClick: " + position);
                         AppointmentViewModel appointment = (AppointmentViewModel) obj;
                         Intent intent = new Intent(getActivity().getApplicationContext(), AppointmentDetailActivity.class);
                         intent.setData(null);
-                        intent.putExtra("AppointmentViewModel", (Serializable) appointment);
+                        intent.putExtra("AppointmentViewModel", appointment);
                         startActivity(intent);
                     }
 
@@ -145,49 +130,45 @@ public class AppointmentFragment extends Fragment {
                 };
 
                 List<AppointmentViewModel> appointments = response.body().items;
-                appointmentAdapter = new AppointmentAdapter(appointments, getActivity().getApplicationContext(), listener);
+                appointmentAdapter = new AppointmentAdapter(appointments, getActivity().getBaseContext(), listener);
                 rcvAppointment.setAdapter(appointmentAdapter);
                 break;
 
             default:
-                ApiErrorHelper.statusCode500(getActivity().getApplicationContext());
+                ApiErrorHelper.statusCode500(getActivity().getBaseContext());
                 break;
         }
     }
 
     //-> newAppointment
     private void newAppointment() {
-        Intent intent = new Intent(getActivity().getApplicationContext(), AppointmentNewActivity.class);
+        Intent intent = new Intent(getActivity().getBaseContext(), AppointmentNewActivity.class);
         startActivity(intent);
     }
 
     //-> openCalendarDialog
-    private void openCalendarDialog(){
+    private void openCalendarDialog() {
         dtp(txtDate);
     }
 
     //-> dtp
-    private void dtp(final EditText txtDtp){
+    private void dtp(final EditText txtDtp) {
         final Calendar c = Calendar.getInstance();
         int mYear = c.get(Calendar.YEAR);
         int mMonth = c.get(Calendar.MONTH);
         int mDay = c.get(Calendar.DAY_OF_MONTH);
         DatePickerDialog dpd = new DatePickerDialog(getActivity(),
-                new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int day) {
-                        txtDtp.setText(DateTimeHelper.get_dd_mm_yyy(year, (month+1), day));
-                        getAppointments();
+                (view, year, month, day) -> {
+                    txtDtp.setText(DateTimeHelper.get_dd_mm_yyy(year, (month + 1), day));
+                    getAppointments();
 
-                    }
                 }, mYear, mMonth, mDay);
         dpd.show();
     }
 
     //-> handleError
-    private void handleError(Throwable t){
+    private void handleError(Throwable t) {
         progress.dismiss();
         ApiErrorHelper.unableConnectToServer(getActivity().getBaseContext(), TAG, t);
     }
-
 }

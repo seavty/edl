@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.DatePicker;
+import android.widget.Toast;
 
 import java.util.Calendar;
 
@@ -36,35 +37,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Appointment Listing");
-
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
         initializeComponents();
-
-
     }
-
 
     @Override
     public void onBackPressed() {
@@ -76,14 +50,31 @@ public class MainActivity extends AppCompatActivity
 //        }
     }
 
-
     //-> initializeComponents()
-    private void initializeComponents(){
+    private void initializeComponents() {
+        setUpViews();
+
         Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
-        goToAppointmentFragment(DateTimeHelper.get_dd_mm_yyy(year, (month+1), day));
+        goToAppointmentFragment(DateTimeHelper.get_dd_mm_yyy(year, (month + 1), day));
+    }
+
+    private void setUpViews() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Appointment Listing");
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
     }
 
     @Override
@@ -122,39 +113,45 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.navAppointment) {
-            fragment = new AppointmentFragment();
-            getFragmentManager().beginTransaction().replace(R.id.mainFragment, fragment, "AppointmentFragment").commit();
-        } else if (id == R.id.navProject) {
-            fragment = new ProjectFragment();
-            getFragmentManager().beginTransaction().replace(R.id.mainFragment, fragment, "ProjectFragment").commit();
-
-        } else if (id == R.id.navLogout) {
-            new AlertDialog.Builder(this)
-                    .setMessage("Do you want to log out?")
-                    .setCancelable(false)
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-                        }
-                    })
-                    .setNegativeButton("No", null)
-                    .show();
+        switch (id) {
+            case R.id.navAppointment:
+                fragment = new AppointmentFragment();
+                getFragmentManager().beginTransaction().replace(R.id.mainFragment, fragment, "AppointmentFragment").commit();
+                break;
+            case R.id.navLogout:
+                new AlertDialog.Builder(this)
+                        .setMessage("Do you want to log out?")
+                        .setCancelable(false)
+                        .setPositiveButton("Yes", (dialog, id1) -> logout())
+                        .setNegativeButton("No", null)
+                        .show();
+                break;
+            default:
+                Toast.makeText(this, "nothing", Toast.LENGTH_SHORT).show();
+                break;
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    @Override
-    public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
-        goToAppointmentFragment(DateTimeHelper.get_yyyy_mm_dd(i, (i1+1), i2));
+    //-> logout
+    private void logout() {
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
-    private void goToAppointmentFragment(String date){
+    @Override
+    public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+        goToAppointmentFragment(DateTimeHelper.get_yyyy_mm_dd(i, (i1 + 1), i2));
+    }
+
+    private void goToAppointmentFragment(String date) {
         fragment = new AppointmentFragment();
-        ((AppointmentFragment)fragment).strDate = date;
+        ((AppointmentFragment) fragment).strDate = date;
         getFragmentManager().beginTransaction().replace(R.id.mainFragment, fragment, "AppointmentFragment").commit();
     }
 }
