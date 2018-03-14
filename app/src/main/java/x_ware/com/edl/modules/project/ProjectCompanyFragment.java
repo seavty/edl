@@ -68,7 +68,7 @@ public class ProjectCompanyFragment extends Fragment {
 
         rcvProjectCompany = view.findViewById(R.id.rcvProjectCompany);
         rcvProjectCompany.setHasFixedSize(true);
-        rcvProjectCompany.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
+        rcvProjectCompany.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         if(getActivity().getIntent() != null && getActivity().getIntent().hasExtra("ProjectViewModel")) {
             project = (ProjectViewModel) getActivity().getIntent().getSerializableExtra("ProjectViewModel");
@@ -92,6 +92,7 @@ public class ProjectCompanyFragment extends Fragment {
 
     //-> handleResults
     private void handleGetProjectCompanies(Response<GetListModel<ProjectCompanyViewModel>> response){
+        Log.d(TAG, "handleGetProjectCompanies: ");
         switch (response.code()) {
             case 200:
                 IRecyclerViewClickListener listener = new IRecyclerViewClickListener() {
@@ -107,12 +108,16 @@ public class ProjectCompanyFragment extends Fragment {
                 };
 
                 List<ProjectCompanyViewModel> projectCompanies = response.body().items;
-                projectCompanyAdapter = new ProjectCompanyAdapter(projectCompanies, getActivity().getApplicationContext() , listener);
+                projectCompanyAdapter = new ProjectCompanyAdapter(projectCompanies, getActivity(), listener);
                 rcvProjectCompany.setAdapter(projectCompanyAdapter);
                 break;
 
             case 500:
-                ApiErrorHelper.statusCode500(getActivity().getApplicationContext());
+                ApiErrorHelper.statusCode500(getActivity());
+                break;
+
+            default:
+                ApiErrorHelper.statusCode500(getActivity());
                 break;
         }
     }
@@ -120,6 +125,6 @@ public class ProjectCompanyFragment extends Fragment {
     //-> handleError
     private void handleError(Throwable t){
         progress.dismiss();
-        ApiErrorHelper.unableConnectToServer(getActivity().getBaseContext(), TAG, t);
+        ApiErrorHelper.unableConnectToServer(getActivity(), TAG, t);
     }
 }

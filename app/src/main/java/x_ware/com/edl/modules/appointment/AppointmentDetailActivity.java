@@ -57,20 +57,13 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_appointment_detail);
-
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Appointment Details");
-
         initializeComponents();
     }
 
     //-> initializeComponents
-    private void initializeComponents(){
-        if(getIntent() != null && getIntent().hasExtra("AppointmentViewModel"))
+    private void initializeComponents() {
+        if (getIntent() != null && getIntent().hasExtra("AppointmentViewModel"))
             appointment = (AppointmentViewModel) getIntent().getSerializableExtra("AppointmentViewModel");
 
         setUpViews();
@@ -79,14 +72,19 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
     }
 
     //-> setUpViews()
-    private void setUpViews(){
+    private void setUpViews() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Appointment Details");
+
         progress = ProgressDialogHelper.getInstance(this);
 
-        lblTiming =  findViewById(R.id.lblTiming);
-        lblCompanyName =  findViewById(R.id.lblCompanyName);
-        lblPhoneNumber =  findViewById(R.id.lblPhoneNumber);
-        lblSubject =  findViewById(R.id.lblSubject);
-        lblDetail =  findViewById(R.id.lblDetail);
+        lblTiming = findViewById(R.id.lblTiming);
+        lblCompanyName = findViewById(R.id.lblCompanyName);
+        lblPhoneNumber = findViewById(R.id.lblPhoneNumber);
+        lblSubject = findViewById(R.id.lblSubject);
+        lblDetail = findViewById(R.id.lblDetail);
 
         btnCheckInOrCheckOut = findViewById(R.id.btnCheckInOrCheckOut);
 
@@ -97,38 +95,24 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
     //-> setUpEvents
     private void setUpEvents() {
         String myText = "check in";
-        if(appointment.checkIncheckOut != null) {
+        if (appointment.checkIncheckOut != null) {
             if (appointment.checkIncheckOut.equals("Checked In"))
                 myText = "check out";
 
         }
         String checkInCheckOutText = myText;
-        btnCheckInOrCheckOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new AlertDialog.Builder(AppointmentDetailActivity.this)
-                        .setMessage("Do you want to " + checkInCheckOutText + " ?")
-                        .setCancelable(false)
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                checkInOrCheckOut();
-                            }
-                        })
-                        .setNegativeButton("No", null)
-                        .show();
-            }
-        });
+        btnCheckInOrCheckOut.setOnClickListener(view -> new AlertDialog.Builder(AppointmentDetailActivity.this)
+                .setMessage("Do you want to " + checkInCheckOutText + " ?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", (dialog, id) -> checkInOrCheckOut())
+                .setNegativeButton("No", null)
+                .show());
 
-        imbEditSubject.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openDetailDialog();
-            }
-        });
+        imbEditSubject.setOnClickListener(view -> openDetailDialog());
     }
 
     //-> getAppointment()
-    private void getAppointment(){
+    private void getAppointment() {
         try {
             RetrofitProvider.get(this).create(IAppointmentAPI.class).getAppointment(appointment.id)
                     .subscribeOn(Schedulers.io())
@@ -136,8 +120,7 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
                     .doOnSubscribe(x -> progress.show())
                     .doOnComplete(() -> progress.dismiss())
                     .subscribe(this::handleGetAppointment, this::handleError);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             Log.d(TAG, "getAppointment: " + ex.getMessage());
         }
     }
@@ -151,27 +134,27 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
                 break;
 
             case 404:
-                ApiErrorHelper.statusCode404(getApplicationContext());
+                ApiErrorHelper.statusCode404(this);
                 break;
 
             case 500:
-                ApiErrorHelper.statusCode500(getApplicationContext());
+                ApiErrorHelper.statusCode500(this);
                 break;
 
             default:
-                ApiErrorHelper.statusCode500(getApplicationContext());
+                ApiErrorHelper.statusCode500(this);
                 break;
         }
     }
 
     //-> handleError
-    private void handleError(Throwable t){
+    private void handleError(Throwable t) {
         progress.dismiss();
         ApiErrorHelper.unableConnectToServer(this, TAG, t);
     }
 
     //-> displayData()
-    private void displayData(){
+    private void displayData() {
         imbEditSubject.setVisibility(View.INVISIBLE);
         lblTiming.setText(DateTimeHelper.convert_yyyy_mm_dd_t_hh_mm_ss_To_dd_mm_yyy_hh_mm(appointment.timing));
         lblCompanyName.setText(appointment.companyName);
@@ -179,13 +162,13 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
         lblSubject.setText(appointment.subject);
         lblDetail.setText(appointment.details);
 
-        if(appointment.checkIncheckOut != null) {
-            if(appointment.checkIncheckOut.equals("Checked In")) {
+        if (appointment.checkIncheckOut != null) {
+            if (appointment.checkIncheckOut.equals("Checked In")) {
                 btnCheckInOrCheckOut.setText("Check Out");
                 imbEditSubject.setVisibility(View.VISIBLE);
             }
 
-            if(appointment.checkIncheckOut.equals("Checked Out"))
+            if (appointment.checkIncheckOut.equals("Checked Out"))
                 btnCheckInOrCheckOut.setEnabled(false);
         }
         displayDrawable(appointment.action);
@@ -193,7 +176,7 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
 
     //-> displayDrawable
     private void displayDrawable(String action) {
-        switch (action){
+        switch (action) {
             case "Delivery":
                 imgAction.setImageDrawable(this.getResources().getDrawable(R.drawable.delivery));
                 break;
@@ -213,14 +196,14 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
     }
 
     //-> openDetailDialog
-    private void openDetailDialog(){
+    private void openDetailDialog() {
         AppointmentDetailDialog detailDialog = new AppointmentDetailDialog();
         detailDialog.appointment = appointment;
         detailDialog.show(getSupportFragmentManager(), "detailDialog");
     }
 
     //-> locationPermission
-    private boolean locationPermission(){
+    private boolean locationPermission() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -245,29 +228,22 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
             } else {
                 mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
                 mFusedLocationClient.getLastLocation()
-                        .addOnSuccessListener(new OnSuccessListener<Location>() {
-                            @Override
-                            public void onSuccess(Location location) {
-                                // GPS location can be null if GPS is switched off
-                                if (location != null) {
-                                    Log.d(TAG, "onSuccess: " + location.getLatitude());
-                                    Log.d(TAG, "onSuccess: " + location.getLongitude());
-                                } else {
-                                    Toast.makeText(AppointmentDetailActivity.this, "Unable to get your current location", Toast.LENGTH_SHORT).show();
+                        .addOnSuccessListener(location -> {
+                            // GPS location can be null if GPS is switched off
+                            if (location != null) {
+                                Log.d(TAG, "onSuccess: " + location.getLatitude());
+                                Log.d(TAG, "onSuccess: " + location.getLongitude());
+                            } else {
+                                Toast.makeText(AppointmentDetailActivity.this, "Unable to get your current location", Toast.LENGTH_SHORT).show();
 
-                                }
                             }
                         })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.d("MapDemoActivity", "Error trying to get last GPS location");
-                                e.printStackTrace();
-                            }
+                        .addOnFailureListener(e -> {
+                            Log.d("MapDemoActivity", "Error trying to get last GPS location");
+                            e.printStackTrace();
                         });
             }
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             Log.d(TAG, "getLocation: " + ex.getMessage());
         }
     }
@@ -296,11 +272,7 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
             new AlertDialog.Builder(this)
                     .setMessage("Do you want to check in?")
                     .setCancelable(false)
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            checkInOrCheckOut();
-                        }
-                    })
+                    .setPositiveButton("Yes", (dialog, id1) -> checkInOrCheckOut())
                     .setNegativeButton("No", null)
                     .show();
         }
@@ -322,7 +294,7 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
     }
 
     //-> checkOut
-    private void checkOut(){
+    private void checkOut() {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mFusedLocationClient.getLastLocation()
                 .addOnSuccessListener(new OnSuccessListener<Location>() {
@@ -382,12 +354,9 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
                         }
                     }
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d("MapDemoActivity", "Error trying to get last GPS location");
-                        e.printStackTrace();
-                    }
+                .addOnFailureListener(e -> {
+                    Log.d("MapDemoActivity", "Error trying to get last GPS location");
+                    e.printStackTrace();
                 });
     }
 
@@ -399,11 +368,11 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
                 displayData();
                 break;
             case 500:
-                ApiErrorHelper.statusCode500(getApplicationContext());
+                ApiErrorHelper.statusCode500(this);
                 break;
 
             default:
-                ApiErrorHelper.statusCode500(getApplicationContext());
+                ApiErrorHelper.statusCode500(this);
                 break;
         }
     }
@@ -429,11 +398,11 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
                 displayData();
                 break;
             case 500:
-                ApiErrorHelper.statusCode500(getApplicationContext());
+                ApiErrorHelper.statusCode500(this);
                 break;
 
             default:
-                ApiErrorHelper.statusCode500(getApplicationContext());
+                ApiErrorHelper.statusCode500(this);
                 break;
         }
     }

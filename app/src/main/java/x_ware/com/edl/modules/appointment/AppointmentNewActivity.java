@@ -52,15 +52,14 @@ public class AppointmentNewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_appointment_new);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         initializeComponents();
     }
 
     private void initializeComponents(){
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         progress = ProgressDialogHelper.getInstance(this);
 
         txtSubject = findViewById(R.id.txtSubject);
@@ -92,26 +91,11 @@ public class AppointmentNewActivity extends AppCompatActivity {
     }
 
     private void setUpEvent(){
-        imbStatTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startTimeClick();
-            }
-        });
+        imbStatTime.setOnClickListener(view -> startTimeClick());
 
-        imbEndTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                endTimeClick();
-            }
-        });
+        imbEndTime.setOnClickListener(view -> endTimeClick());
 
-        imbSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                saveClick();
-            }
-        });
+        imbSave.setOnClickListener(view -> saveClick());
     }
 
     private void startTimeClick(){
@@ -186,22 +170,16 @@ public class AppointmentNewActivity extends AppCompatActivity {
         int mYear = c.get(Calendar.YEAR);
         int mMonth = c.get(Calendar.MONTH);
         int mDay = c.get(Calendar.DAY_OF_MONTH);
-        int mHour = c.get(Calendar.HOUR);
-        int mMinute = c.get(Calendar.MINUTE);
-        TimePickerDialog tpd;
         DatePickerDialog dpd = new DatePickerDialog(this,
-                new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int day) {
-                        //api >= 21 time picker show only one time
-                        //but api < 21 time picker show two time so we need to use this trick
-                        if(count == 0) {
-                            timePicker(txtDtp, DateTimeHelper.get_dd_mm_yyy(year, (month+1), day)); // tmp comment
-                            count++;
-                        }
-                        else {
-                            count =0;
-                        }
+                (view, year, month, day) -> {
+                    //api >= 21 time picker show only one time
+                    //but api < 21 time picker show two time so we need to use this trick
+                    if(count == 0) {
+                        timePicker(txtDtp, DateTimeHelper.get_dd_mm_yyy(year, (month+1), day)); // tmp comment
+                        count++;
+                    }
+                    else {
+                        count =0;
                     }
                 }, mYear, mMonth, mDay);
         dpd.show();
@@ -213,12 +191,9 @@ public class AppointmentNewActivity extends AppCompatActivity {
         int mHour = c.get(Calendar.HOUR);
         int mMinute = c.get(Calendar.MINUTE);
 
-        TimePickerDialog tpd = new TimePickerDialog(AppointmentNewActivity.this, new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker timePicker, int hour, int minute) {
-                String timeSrr= DateTimeHelper.time_HH_MM(hour, minute);
-                txt.setText(dateStr + " " + timeSrr);
-            }
+        TimePickerDialog tpd = new TimePickerDialog(AppointmentNewActivity.this, (timePicker, hour, minute) -> {
+            String timeSrr= DateTimeHelper.time_HH_MM(hour, minute);
+            txt.setText(dateStr + " " + timeSrr);
         }, mHour, mMinute, true);
         tpd.show();
     }
@@ -229,14 +204,14 @@ public class AppointmentNewActivity extends AppCompatActivity {
             case 200:
                 Toast.makeText(this, "Successfully created appointment", Toast.LENGTH_SHORT).show();
                 clearData();
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                startActivity(new Intent(this, MainActivity.class));
                 break;
             case 500:
-                ApiErrorHelper.statusCode500(getApplicationContext());
+                ApiErrorHelper.statusCode500(this);
                 break;
 
             default:
-                ApiErrorHelper.statusCode500(getApplicationContext());
+                ApiErrorHelper.statusCode500(this);
                 break;
         }
     }

@@ -52,7 +52,6 @@ public class ProjectDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_detail);
-
         initializeComponents();
     }
 

@@ -23,6 +23,7 @@ import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
 import x_ware.com.edl.R;
 import x_ware.com.edl.adapters.project.ProjectCommunicationAdapter;
+import x_ware.com.edl.helpers.ApiErrorHelper;
 import x_ware.com.edl.helpers.ProgressDialogHelper;
 import x_ware.com.edl.networking.api.IProjectAPI;
 import x_ware.com.edl.interfaces.IRecyclerViewClickListener;
@@ -65,57 +66,65 @@ public class ProjectCommunicationFragment extends Fragment {
             project = (ProjectViewModel) getActivity().getIntent().getSerializableExtra("ProjectViewModel");
 
         setUpViews(view);
-        getProjectSpecifications();
+        getProjectCommunications();
     }
 
     private void setUpViews(View view) {
         progress = ProgressDialogHelper.getInstance(getActivity());
         rcvProjectCommunication = view.findViewById(R.id.rcvProjectCommunication);
         rcvProjectCommunication.setHasFixedSize(true);
-        rcvProjectCommunication.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
+        rcvProjectCommunication.setLayoutManager(new LinearLayoutManager(getActivity()));
         lblTotalRecord = view.findViewById(R.id.lblTotalRecord);
     }
 
     //-> getProjectCompanies()
-    private void getProjectSpecifications(){
+    private void getProjectCommunications(){
         try {
             RetrofitProvider.get(getActivity()).create(IProjectAPI.class).getProjectCommunications(project.id,currentPage)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe(x -> progress.show())
                     .doOnComplete(() -> progress.dismiss())
-                    .subscribe(this::handleResults, this::handleError);
+                    .subscribe(this::handleGetProjectCommunications, this::handleError);
         }
         catch (Exception ex) {
-            Log.d(TAG, "getProjectSpecifications: " + ex.getMessage());
+            Log.d(TAG, "getProjectCommunications: " + ex.getMessage());
         }
     }
 
     //-> handleResults
-    private void handleResults(Response<GetListModel<ProjectCommunicationViewModel>> response){
-        if(response.code() == 200) {
-            IRecyclerViewClickListener listener = new IRecyclerViewClickListener() {
-                @Override
-                public void onClick(View view, int position, Object obj) {
-                    Log.d(TAG, "onClick: ");
-                }
+    private void handleGetProjectCommunications(Response<GetListModel<ProjectCommunicationViewModel>> response){
+        switch (response.code()){
+            case 200:
+                IRecyclerViewClickListener listener = new IRecyclerViewClickListener() {
+                    @Override
+                    public void onClick(View view, int position, Object obj) {
+                        Log.d(TAG, "onClick: ");
+                    }
 
-                @Override
-                public void onLongClick(View view, int position, Object obj) {
-                    Log.d(TAG, "onLongClick: ");
-                }
-            };
-            lblTotalRecord.setText(response.body().metaData.totalRecord + ""); // total record is integer so need to convert it to string
-            projectCommunicationAdapter = new ProjectCommunicationAdapter(response.body().items, getActivity().getBaseContext() , listener);
-            rcvProjectCommunication.setAdapter(projectCommunicationAdapter);
+                    @Override
+                    public void onLongClick(View view, int position, Object obj) {
+                        Log.d(TAG, "onLongClick: ");
+                    }
+                };
+                lblTotalRecord.setText(response.body().metaData.totalRecord + ""); // total record is integer so need to convert it to string
+                projectCommunicationAdapter = new ProjectCommunicationAdapter(response.body().items, getActivity(), listener);
+                rcvProjectCommunication.setAdapter(projectCommunicationAdapter);
+                break;
+
+            case 500:
+                ApiErrorHelper.statusCode500(getActivity());
+                break;
+
+            default:
+                ApiErrorHelper.statusCode500(getActivity());
+                break;
         }
     }
 
     //-> handleError
     private void handleError(Throwable t){
         progress.dismiss();
-        Log.d(TAG, "handleError: " );
+        ApiErrorHelper.unableConnectToServer(getActivity(), TAG, t);
     }
-
-
 }

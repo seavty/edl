@@ -2,6 +2,7 @@ package x_ware.com.edl.adapters.appointment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -79,15 +80,26 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
                 break;
         }
 
-        holder.imbProject.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(context, ProjectActivity.class);
-                intent.putExtra("AppointmentViewModel", appointment);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
-            }
+        holder.imbProject.setOnClickListener(view -> {
+            Intent intent = new Intent(context, ProjectActivity.class);
+            intent.putExtra("AppointmentViewModel", appointment);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
         });
+
+        if(appointment.address !=null && !appointment.address.equals("")) {
+
+            holder.lblAddress.setOnClickListener(view -> {
+                //Uri gmmIntentUri = Uri.parse("geo:37.7749,-122.4194");
+                Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + Uri.encode(appointment.address));
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+                if (mapIntent.resolveActivity(context.getPackageManager()) != null) {
+                    mapIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(mapIntent);
+                }
+            });
+        }
     }
 
     @Override

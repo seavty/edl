@@ -66,9 +66,9 @@ public class ProjectSpecificationFragment extends Fragment {
     private void initializeComponents(View view){
         progress = ProgressDialogHelper.getInstance(getActivity());
 
-        rcvSpecifications = ((RecyclerView) view.findViewById(R.id.rcvProjectSpecification));
+        rcvSpecifications = view.findViewById(R.id.rcvProjectSpecification);
         rcvSpecifications.setHasFixedSize(true);
-        rcvSpecifications.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
+        rcvSpecifications.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         if(getActivity().getIntent() != null && getActivity().getIntent().hasExtra("ProjectViewModel")) {
             project = (ProjectViewModel) getActivity().getIntent().getSerializableExtra("ProjectViewModel");
@@ -92,32 +92,42 @@ public class ProjectSpecificationFragment extends Fragment {
 
     //-> handleResults
     private void handleGetProjectSpecifications(Response<GetListModel<ProjectSpecificationViewModel>> response){
-        if(response.code() == 200) {
-            IRecyclerViewClickListener listener = new IRecyclerViewClickListener() {
-                @Override
-                public void onClick(View view, int position, Object obj) {
-                    Log.d(TAG, "onClick: " + position);
+        switch (response.code()){
+            case 200:
+                IRecyclerViewClickListener listener = new IRecyclerViewClickListener() {
+                    @Override
+                    public void onClick(View view, int position, Object obj) {
+                        Log.d(TAG, "onClick: " + position);
 
-                }
+                    }
 
-                @Override
-                public void onLongClick(View view, int position, Object obj) {
-                    Log.d(TAG, "onLongClick: ");
-                }
-            };
-            List<ProjectSpecificationViewModel> specifications = response.body().items;
-            projectSpecificationAdapter = new ProjectSpecificationAdapter(specifications, getActivity().getApplicationContext() , listener);
-            rcvSpecifications.setAdapter(projectSpecificationAdapter);
+                    @Override
+                    public void onLongClick(View view, int position, Object obj) {
+                        Log.d(TAG, "onLongClick: ");
+                    }
+                };
+                List<ProjectSpecificationViewModel> specifications = response.body().items;
+                projectSpecificationAdapter = new ProjectSpecificationAdapter(specifications, getActivity() , listener);
+                rcvSpecifications.setAdapter(projectSpecificationAdapter);
 //            if(specifications.size() == 0)
 //                Helper.noRecordToast(getActivity().getApplicationContext());
+                break;
 
+            case 500:
+                ApiErrorHelper.statusCode500(getActivity());
+                break;
+
+            default:
+                ApiErrorHelper.statusCode500(getActivity());
+                break;
         }
+
     }
 
     //-> handleError
     private void handleError(Throwable t){
         progress.dismiss();
-        ApiErrorHelper.unableConnectToServer(getActivity().getBaseContext(), TAG, t);
+        ApiErrorHelper.unableConnectToServer(getActivity(), TAG, t);
     }
 
 

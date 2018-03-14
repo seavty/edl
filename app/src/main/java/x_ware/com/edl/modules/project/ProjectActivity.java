@@ -48,13 +48,6 @@ public class ProjectActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Project Listing");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         initializeComponents();
     }
 
@@ -74,6 +67,13 @@ public class ProjectActivity extends AppCompatActivity {
 
     //-> setUpViews
     private void setUpViews(){
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Project Listing");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         progress = ProgressDialogHelper.getInstance(this);
         rcvProject = findViewById(R.id.rcvProject);
         rcvProject.setHasFixedSize(true);
@@ -104,7 +104,7 @@ public class ProjectActivity extends AppCompatActivity {
                     public void onClick(View view, int position, Object obj) {
                         ProjectViewModel project = (ProjectViewModel)obj;
                         Intent intent =  new Intent(getApplicationContext(), ProjectDetailActivity.class);
-                        intent.putExtra("ProjectViewModel", (Serializable) project);
+                        intent.putExtra("ProjectViewModel", project);
                         startActivity(intent);
                     }
 

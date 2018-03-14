@@ -32,8 +32,6 @@ public interface IProjectAPI {
     Observable<Response<GetListModel<ProjectCommunicationViewModel>>> getProjectCommunications(@Path("id") int id,
                                                                                                @Query("currentPage") int page);
 
-
-
     @GET("projects/{id}/companyPrjs")
     Observable<Response<GetListModel<ProjectViewModel>>> getProjectsBoundWithCompany(@Path("id") int id,
                                                                                                @Query("currentPage") int page);

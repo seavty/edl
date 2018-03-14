@@ -117,7 +117,7 @@ public class AppointmentFragment extends Fragment {
                     @Override
                     public void onClick(View view, int position, Object obj) {
                         AppointmentViewModel appointment = (AppointmentViewModel) obj;
-                        Intent intent = new Intent(getActivity().getApplicationContext(), AppointmentDetailActivity.class);
+                        Intent intent = new Intent(getActivity(), AppointmentDetailActivity.class);
                         intent.setData(null);
                         intent.putExtra("AppointmentViewModel", appointment);
                         startActivity(intent);
@@ -130,19 +130,19 @@ public class AppointmentFragment extends Fragment {
                 };
 
                 List<AppointmentViewModel> appointments = response.body().items;
-                appointmentAdapter = new AppointmentAdapter(appointments, getActivity().getBaseContext(), listener);
+                appointmentAdapter = new AppointmentAdapter(appointments, getActivity(), listener);
                 rcvAppointment.setAdapter(appointmentAdapter);
                 break;
 
             default:
-                ApiErrorHelper.statusCode500(getActivity().getBaseContext());
+                ApiErrorHelper.statusCode500(getActivity());
                 break;
         }
     }
 
     //-> newAppointment
     private void newAppointment() {
-        Intent intent = new Intent(getActivity().getBaseContext(), AppointmentNewActivity.class);
+        Intent intent = new Intent(getActivity(), AppointmentNewActivity.class);
         startActivity(intent);
     }
 
@@ -169,6 +169,6 @@ public class AppointmentFragment extends Fragment {
     //-> handleError
     private void handleError(Throwable t) {
         progress.dismiss();
-        ApiErrorHelper.unableConnectToServer(getActivity().getBaseContext(), TAG, t);
+        ApiErrorHelper.unableConnectToServer(getActivity(), TAG, t);
     }
 }

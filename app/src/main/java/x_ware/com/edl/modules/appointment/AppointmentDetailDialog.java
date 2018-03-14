@@ -31,18 +31,12 @@ public class AppointmentDetailDialog extends AppCompatDialogFragment {
 
         builder.setView(view)
                 .setTitle("Detail")
-                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                .setNegativeButton("cancel", (dialogInterface, i) -> {
 
-                    }
                 })
-                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        appointment.details = txtDetail.getText().toString();
-                        listener.onComplete(appointment);
-                    }
+                .setPositiveButton("ok", (dialogInterface, i) -> {
+                    appointment.details = txtDetail.getText().toString();
+                    listener.onComplete(appointment);
                 });
 
         txtDetail = view.findViewById(R.id.txtDetail);

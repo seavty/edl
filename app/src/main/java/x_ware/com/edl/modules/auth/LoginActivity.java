@@ -1,8 +1,17 @@
 package x_ware.com.edl.modules.auth;
 
+import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -31,6 +40,10 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnLogin, btnClear;
     private ProgressDialog progress;
 
+    private BroadcastReceiver broadcastReceiver;
+
+    private int count = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,8 +55,21 @@ public class LoginActivity extends AppCompatActivity {
     private void initializeComponents() {
         setUpViews();
         setUpEvents();
-    }
 
+
+        /* location
+        //Uri gmmIntentUri = Uri.parse("geo:37.7749,-122.4194");
+        Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + Uri.encode("Aeon Mall, Phnom Penhb"));
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        mapIntent.setPackage("com.google.android.apps.maps");
+        if (mapIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(mapIntent);
+        }
+
+        */
+
+        
+    }
     //-> setUpViews
     private void setUpViews() {
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -97,6 +123,7 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d(TAG, "login: " + ex.getMessage());
             }
         }
+
     }
 
     //-> handleLogin
