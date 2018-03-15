@@ -4,7 +4,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -31,7 +30,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
 import x_ware.com.edl.R;
-import x_ware.com.edl.helpers.ApiErrorHelper;
+import x_ware.com.edl.helpers.ApiHelper;
 import x_ware.com.edl.helpers.DateTimeHelper;
 import x_ware.com.edl.networking.api.IAppointmentAPI;
 import x_ware.com.edl.helpers.ProgressDialogHelper;
@@ -128,26 +127,16 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
 
     //-> handleGetAppointment
     private void handleGetAppointment(Response<AppointmentViewModel> response) {
-        switch (response.code()) {
-            case 200:
-                appointment = response.body();
-                displayData();
-                break;
-
-            case 401:
-                ApiErrorHelper.statusCode401(this);
-                break;
-
-            default:
-                ApiErrorHelper.statusCode500(this);
-                break;
+        if(ApiHelper.isSuccessful(this, response.code())){
+            appointment = response.body();
+            displayData();
         }
     }
 
     //-> handleError
     private void handleError(Throwable t) {
         progress.dismiss();
-        ApiErrorHelper.unableConnectToServer(this, TAG, t);
+        ApiHelper.unableConnectToServer(this, TAG, t);
     }
 
     //-> displayData()
@@ -302,7 +291,7 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
                         checkout.id = appointment.id;
                         checkout.latitude = location.getLatitude();
                         checkout.longitude = location.getLongitude();
-                        RetrofitProvider.get().create(IAppointmentAPI.class).checkOut(appointment.id, checkout)
+                        RetrofitProvider.get(AppointmentDetailActivity.this).create(IAppointmentAPI.class).checkOut(appointment.id, checkout)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .doOnSubscribe(x -> progress.show())
@@ -337,7 +326,7 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
                             checkInModel.id = appointment.id;
                             checkInModel.latitude = location.getLatitude();
                             checkInModel.longitude = location.getLongitude();
-                            RetrofitProvider.get().create(IAppointmentAPI.class).checkIn(appointment.id, checkInModel)
+                            RetrofitProvider.get(AppointmentDetailActivity.this).create(IAppointmentAPI.class).checkIn(appointment.id, checkInModel)
                                     .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .doOnSubscribe(x -> progress.show())
@@ -358,19 +347,9 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
 
     //-> handleCheckInOrCheckOut
     private void handleCheckInOrCheckOut(Response<AppointmentViewModel> response) {
-        switch (response.code()) {
-            case 200:
-                appointment = response.body();
-                displayData();
-                break;
-
-            case 401:
-                ApiErrorHelper.statusCode401(this);
-                break;
-
-            default:
-                ApiErrorHelper.statusCode500(this);
-                break;
+        if(ApiHelper.isSuccessful(this, response.code())){
+            appointment = response.body();
+            displayData();
         }
     }
 
@@ -389,19 +368,9 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
 
     //-> handleEditDetail
     private void handleEditDetail(Response<AppointmentViewModel> response) {
-        switch (response.code()) {
-            case 200:
-                appointment = response.body();
-                displayData();
-                break;
-
-            case 401:
-                ApiErrorHelper.statusCode401(this);
-                break;
-
-            default:
-                ApiErrorHelper.statusCode500(this);
-                break;
+        if(ApiHelper.isSuccessful(this, response.code())){
+            appointment = response.body();
+            displayData();
         }
     }
 }

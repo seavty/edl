@@ -11,23 +11,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.reactivestreams.Subscription;
-
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
-import retrofit2.Call;
 import retrofit2.Response;
 import x_ware.com.edl.R;
 import x_ware.com.edl.adapters.project.ProjectSpecificationAdapter;
-import x_ware.com.edl.helpers.ApiErrorHelper;
+import x_ware.com.edl.helpers.ApiHelper;
 import x_ware.com.edl.helpers.ProgressDialogHelper;
 import x_ware.com.edl.networking.api.IProjectAPI;
 import x_ware.com.edl.interfaces.IRecyclerViewClickListener;
 import x_ware.com.edl.networking.models.GetListModel;
-import x_ware.com.edl.networking.models.project.ProjectCommunicationViewModel;
 import x_ware.com.edl.networking.models.project.ProjectSpecificationViewModel;
 import x_ware.com.edl.networking.models.project.ProjectViewModel;
 import x_ware.com.edl.networking.RetrofitProvider;
@@ -92,38 +87,28 @@ public class ProjectSpecificationFragment extends Fragment {
 
     //-> handleResults
     private void handleGetProjectSpecifications(Response<GetListModel<ProjectSpecificationViewModel>> response){
-        switch (response.code()){
-            case 200:
-                IRecyclerViewClickListener listener = new IRecyclerViewClickListener() {
-                    @Override
-                    public void onClick(View view, int position, Object obj) {
-                        Log.d(TAG, "onClick: " + position);
+        if(ApiHelper.isSuccessful(getActivity(), response.code())){
+            IRecyclerViewClickListener listener = new IRecyclerViewClickListener() {
+                @Override
+                public void onClick(View view, int position, Object obj) {
+                    Log.d(TAG, "onClick: " + position);
 
-                    }
+                }
 
-                    @Override
-                    public void onLongClick(View view, int position, Object obj) {
-                        Log.d(TAG, "onLongClick: ");
-                    }
-                };
-                List<ProjectSpecificationViewModel> specifications = response.body().items;
-                projectSpecificationAdapter = new ProjectSpecificationAdapter(specifications, getActivity() , listener);
-                rcvSpecifications.setAdapter(projectSpecificationAdapter);
-                break;
-
-            case 401:
-                ApiErrorHelper.statusCode401(getActivity());
-                break;
-
-            default:
-                ApiErrorHelper.statusCode500(getActivity());
-                break;
+                @Override
+                public void onLongClick(View view, int position, Object obj) {
+                    Log.d(TAG, "onLongClick: ");
+                }
+            };
+            List<ProjectSpecificationViewModel> specifications = response.body().items;
+            projectSpecificationAdapter = new ProjectSpecificationAdapter(specifications, getActivity() , listener);
+            rcvSpecifications.setAdapter(projectSpecificationAdapter);
         }
     }
 
     //-> handleError
     private void handleError(Throwable t){
         progress.dismiss();
-        ApiErrorHelper.unableConnectToServer(getActivity(), TAG, t);
+        ApiHelper.unableConnectToServer(getActivity(), TAG, t);
     }
 }

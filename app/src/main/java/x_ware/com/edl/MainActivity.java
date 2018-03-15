@@ -23,8 +23,6 @@ import x_ware.com.edl.dialogs.DatePickerDialogFragment;
 import x_ware.com.edl.helpers.DateTimeHelper;
 import x_ware.com.edl.modules.appointment.AppointmentFragment;
 import x_ware.com.edl.modules.auth.LoginActivity;
-import x_ware.com.edl.modules.project.ProjectFragment;
-
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,

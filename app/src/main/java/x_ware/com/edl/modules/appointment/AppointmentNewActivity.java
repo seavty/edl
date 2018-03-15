@@ -6,20 +6,13 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.util.Calendar;
@@ -29,7 +22,7 @@ import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
 import x_ware.com.edl.MainActivity;
 import x_ware.com.edl.R;
-import x_ware.com.edl.helpers.ApiErrorHelper;
+import x_ware.com.edl.helpers.ApiHelper;
 import x_ware.com.edl.helpers.ProgressDialogHelper;
 import x_ware.com.edl.networking.api.IAppointmentAPI;
 import x_ware.com.edl.helpers.DateTimeHelper;
@@ -75,7 +68,6 @@ public class AppointmentNewActivity extends AppCompatActivity {
 
         setUpSpinner();
         setUpEvent();
-        clearData();
     }
 
     private void setUpSpinner() {
@@ -200,34 +192,17 @@ public class AppointmentNewActivity extends AppCompatActivity {
 
     //-> handleSave
     private void handleSave(Response<AppointmentViewModel> response) {
-        switch (response.code()) {
-            case 200:
-                Toast.makeText(this, "Successfully created appointment", Toast.LENGTH_SHORT).show();
-                clearData();
-                startActivity(new Intent(this, MainActivity.class));
-                break;
-
-            case 401:
-                ApiErrorHelper.statusCode401(this);
-                break;
-
-            default:
-                ApiErrorHelper.statusCode500(this);
-                break;
+        if(ApiHelper.isSuccessful(this, response.code())){
+            Toast.makeText(this, "Successfully created appointment", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
         }
     }
+
     //-> handleError
     private void handleError(Throwable t){
         progress.dismiss();
-        ApiErrorHelper.unableConnectToServer(this, TAG, t);
-    }
-
-    //-> clearData
-    private void clearData(){
-        txtSubject.setText("");
-        txtCommunicationDetails.setText("");
-        txtStartTime.setText("");
-        txtEndTime.setText("");
+        ApiHelper.unableConnectToServer(this, TAG, t);
     }
 
     @Override

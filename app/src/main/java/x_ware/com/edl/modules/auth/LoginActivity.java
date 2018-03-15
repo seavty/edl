@@ -1,18 +1,12 @@
 package x_ware.com.edl.modules.auth;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -21,7 +15,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -32,7 +25,7 @@ import retrofit2.Response;
 import x_ware.com.edl.MainActivity;
 import x_ware.com.edl.R;
 import x_ware.com.edl.networking.api.IUserAPI;
-import x_ware.com.edl.helpers.ApiErrorHelper;
+import x_ware.com.edl.helpers.ApiHelper;
 import x_ware.com.edl.helpers.PreferenceHelper;
 import x_ware.com.edl.helpers.PreferenceKeyHelper;
 import x_ware.com.edl.helpers.ProgressDialogHelper;
@@ -45,9 +38,6 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
     private EditText txtUserName, txtPassword;
     private Button btnLogin, btnClear;
     private ProgressDialog progress;
-
-    private BroadcastReceiver broadcastReceiver;
-    private int count = 0;
 
 
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 2;
@@ -69,21 +59,6 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
         setUpViews();
         setUpEvents();
 
-
-        /* location
-        //Uri gmmIntentUri = Uri.parse("geo:37.7749,-122.4194");
-        Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + Uri.encode("Aeon Mall, Phnom Penhb"));
-        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-        mapIntent.setPackage("com.google.android.apps.maps");
-        if (mapIntent.resolveActivity(getPackageManager()) != null) {
-            startActivity(mapIntent);
-        }
-
-        */
-
-        //testLocation();
-
-        
     }
     private void testLocation(){
         Toast.makeText(this, "test location", Toast.LENGTH_SHORT).show();
@@ -146,8 +121,8 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
 
     //-> login
     private void login() {
-        testLocation();
-        /*
+        //testLocation();
+
         if (validation()) {
             try {
                 UserLoginModel user = new UserLoginModel();
@@ -163,7 +138,6 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
                 Log.d(TAG, "login: " + ex.getMessage());
             }
         }
-        */
 
     }
 
@@ -181,7 +155,7 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
                 break;
 
             default:
-                ApiErrorHelper.statusCode500(this);
+                Toast.makeText(this, "Error occurred while processing your request!", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
@@ -189,7 +163,7 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
     //-> handleError
     private void handleError(Throwable t) {
         progress.dismiss();
-        ApiErrorHelper.unableConnectToServer(this, TAG, t);
+        ApiHelper.unableConnectToServer(this, TAG, t);
     }
 
     @Override
@@ -200,13 +174,17 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
     @Override
     public void onLocationChanged(Location location) {
         this.location = location;
+
+        Log.d(TAG, "onLocationChanged: " + location.toString());
         //tvLongitude.setText(String.valueOf(location.getLongitude()));
         //tvLatitude.setText(String.valueOf(location.getLatitude()));
         Log.d(TAG, "onLocationChanged: ");
         Log.d(TAG, "onLocationChanged: " + location.getLongitude());
         Log.d(TAG, "onLocationChanged: " + location.getLatitude());
-        
+
+        Toast.makeText(this, "location.getLongitude()" + location.getLongitude() , Toast.LENGTH_SHORT).show();
         locationManager.removeUpdates(this);
+
     }
 
     @Override

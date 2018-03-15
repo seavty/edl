@@ -14,12 +14,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
-import java.io.Serializable;
 import java.util.Calendar;
 import java.util.List;
 
@@ -28,9 +25,8 @@ import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
 import x_ware.com.edl.R;
 import x_ware.com.edl.adapters.appointment.AppointmentAdapter;
-import x_ware.com.edl.modules.auth.LoginActivity;
 import x_ware.com.edl.networking.api.IAppointmentAPI;
-import x_ware.com.edl.helpers.ApiErrorHelper;
+import x_ware.com.edl.helpers.ApiHelper;
 import x_ware.com.edl.helpers.DateTimeHelper;
 import x_ware.com.edl.helpers.ProgressDialogHelper;
 import x_ware.com.edl.interfaces.IRecyclerViewClickListener;
@@ -113,36 +109,26 @@ public class AppointmentFragment extends Fragment {
 
     //-> handleGetAppointments
     private void handleGetAppointments(Response<GetListModel<AppointmentViewModel>> response) {
-        switch (response.code()) {
-            case 200:
-                IRecyclerViewClickListener listener = new IRecyclerViewClickListener() {
-                    @Override
-                    public void onClick(View view, int position, Object obj) {
-                        AppointmentViewModel appointment = (AppointmentViewModel) obj;
-                        Intent intent = new Intent(getActivity(), AppointmentDetailActivity.class);
-                        intent.setData(null);
-                        intent.putExtra("AppointmentViewModel", appointment);
-                        startActivity(intent);
-                    }
+        if(ApiHelper.isSuccessful(getActivity(), response.code())){
+            IRecyclerViewClickListener listener = new IRecyclerViewClickListener() {
+                @Override
+                public void onClick(View view, int position, Object obj) {
+                    AppointmentViewModel appointment = (AppointmentViewModel) obj;
+                    Intent intent = new Intent(getActivity(), AppointmentDetailActivity.class);
+                    intent.setData(null);
+                    intent.putExtra("AppointmentViewModel", appointment);
+                    startActivity(intent);
+                }
 
-                    @Override
-                    public void onLongClick(View view, int position, Object obj) {
-                        Log.d(TAG, "onLongClick: ");
-                    }
-                };
+                @Override
+                public void onLongClick(View view, int position, Object obj) {
+                    Log.d(TAG, "onLongClick: ");
+                }
+            };
 
-                List<AppointmentViewModel> appointments = response.body().items;
-                appointmentAdapter = new AppointmentAdapter(appointments, getActivity(), listener);
-                rcvAppointment.setAdapter(appointmentAdapter);
-                break;
-
-            case 401:
-                ApiErrorHelper.statusCode401(getActivity());
-                break;
-
-            default:
-                ApiErrorHelper.statusCode500(getActivity());
-                break;
+            List<AppointmentViewModel> appointments = response.body().items;
+            appointmentAdapter = new AppointmentAdapter(appointments, getActivity(), listener);
+            rcvAppointment.setAdapter(appointmentAdapter);
         }
     }
 
@@ -175,6 +161,6 @@ public class AppointmentFragment extends Fragment {
     //-> handleError
     private void handleError(Throwable t) {
         progress.dismiss();
-        ApiErrorHelper.unableConnectToServer(getActivity(), TAG, t);
+        ApiHelper.unableConnectToServer(getActivity(), TAG, t);
     }
 }
