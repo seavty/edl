@@ -78,7 +78,7 @@ public class ProjectSpecificationFragment extends Fragment {
     //-> getProjectCompanies()
     private void getProjectSpecifications(){
         try {
-            RetrofitProvider.get().create(IProjectAPI.class).getProjectSpecifications(project.id,1)
+            RetrofitProvider.get(getActivity()).create(IProjectAPI.class).getProjectSpecifications(project.id,1)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe(x -> progress.show())
@@ -109,19 +109,16 @@ public class ProjectSpecificationFragment extends Fragment {
                 List<ProjectSpecificationViewModel> specifications = response.body().items;
                 projectSpecificationAdapter = new ProjectSpecificationAdapter(specifications, getActivity() , listener);
                 rcvSpecifications.setAdapter(projectSpecificationAdapter);
-//            if(specifications.size() == 0)
-//                Helper.noRecordToast(getActivity().getApplicationContext());
                 break;
 
-            case 500:
-                ApiErrorHelper.statusCode500(getActivity());
+            case 401:
+                ApiErrorHelper.statusCode401(getActivity());
                 break;
 
             default:
                 ApiErrorHelper.statusCode500(getActivity());
                 break;
         }
-
     }
 
     //-> handleError
@@ -129,6 +126,4 @@ public class ProjectSpecificationFragment extends Fragment {
         progress.dismiss();
         ApiErrorHelper.unableConnectToServer(getActivity(), TAG, t);
     }
-
-
 }

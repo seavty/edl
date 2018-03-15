@@ -206,8 +206,9 @@ public class AppointmentNewActivity extends AppCompatActivity {
                 clearData();
                 startActivity(new Intent(this, MainActivity.class));
                 break;
-            case 500:
-                ApiErrorHelper.statusCode500(this);
+
+            case 401:
+                ApiErrorHelper.statusCode401(this);
                 break;
 
             default:

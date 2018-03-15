@@ -1,6 +1,7 @@
 package x_ware.com.edl.modules.appointment;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -133,12 +134,8 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
                 displayData();
                 break;
 
-            case 404:
-                ApiErrorHelper.statusCode404(this);
-                break;
-
-            case 500:
-                ApiErrorHelper.statusCode500(this);
+            case 401:
+                ApiErrorHelper.statusCode401(this);
                 break;
 
             default:
@@ -294,29 +291,27 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
     }
 
     //-> checkOut
+    @SuppressLint("MissingPermission")
     private void checkOut() {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mFusedLocationClient.getLastLocation()
-                .addOnSuccessListener(new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // GPS location can be null if GPS is switched off
-                        if (location != null) {
-                            AppointmentCheckOutModel checkout = new AppointmentCheckOutModel();
-                            checkout.id = appointment.id;
-                            checkout.latitude = location.getLatitude();
-                            checkout.longitude = location.getLongitude();
-                            RetrofitProvider.get().create(IAppointmentAPI.class).checkOut(appointment.id, checkout)
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .doOnSubscribe(x -> progress.show())
-                                    .doOnComplete(() -> progress.dismiss())
-                                    .subscribe(AppointmentDetailActivity.this::handleCheckInOrCheckOut, AppointmentDetailActivity.this::handleError);
+                .addOnSuccessListener(location -> {
+                    // GPS location can be null if GPS is switched off
+                    if (location != null) {
+                        AppointmentCheckOutModel checkout = new AppointmentCheckOutModel();
+                        checkout.id = appointment.id;
+                        checkout.latitude = location.getLatitude();
+                        checkout.longitude = location.getLongitude();
+                        RetrofitProvider.get().create(IAppointmentAPI.class).checkOut(appointment.id, checkout)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .doOnSubscribe(x -> progress.show())
+                                .doOnComplete(() -> progress.dismiss())
+                                .subscribe(AppointmentDetailActivity.this::handleCheckInOrCheckOut, AppointmentDetailActivity.this::handleError);
 
-                        } else {
-                            Toast.makeText(AppointmentDetailActivity.this, "Unable to get your current location", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(AppointmentDetailActivity.this, "Unable to get your current location", Toast.LENGTH_SHORT).show();
 
-                        }
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -329,6 +324,7 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
     }
 
     //-> checkIn
+    @SuppressLint("MissingPermission")
     private void checkIn() {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mFusedLocationClient.getLastLocation()
@@ -367,8 +363,9 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
                 appointment = response.body();
                 displayData();
                 break;
-            case 500:
-                ApiErrorHelper.statusCode500(this);
+
+            case 401:
+                ApiErrorHelper.statusCode401(this);
                 break;
 
             default:
@@ -382,7 +379,7 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
         AppointmentEditDetailModel editDetail = new AppointmentEditDetailModel();
         editDetail.id = appointment.id;
         editDetail.details = appointment.details;
-        RetrofitProvider.get().create(IAppointmentAPI.class).editDetail(appointment.id, editDetail)
+        RetrofitProvider.get(this).create(IAppointmentAPI.class).editDetail(appointment.id, editDetail)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(x -> progress.show())
@@ -397,8 +394,9 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
                 appointment = response.body();
                 displayData();
                 break;
-            case 500:
-                ApiErrorHelper.statusCode500(this);
+
+            case 401:
+                ApiErrorHelper.statusCode401(this);
                 break;
 
             default:

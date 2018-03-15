@@ -112,8 +112,8 @@ public class ProjectCommunicationFragment extends Fragment {
                 rcvProjectCommunication.setAdapter(projectCommunicationAdapter);
                 break;
 
-            case 500:
-                ApiErrorHelper.statusCode500(getActivity());
+            case 401:
+                ApiErrorHelper.statusCode401(getActivity());
                 break;
 
             default:

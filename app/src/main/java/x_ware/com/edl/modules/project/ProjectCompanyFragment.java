@@ -78,7 +78,7 @@ public class ProjectCompanyFragment extends Fragment {
     //-> getProjectCompanies()
     private void getProjectCompanies(){
         try {
-            RetrofitProvider.get().create(IProjectAPI.class).getProjectCompanies(project.id, currentPage)
+            RetrofitProvider.get(getActivity()).create(IProjectAPI.class).getProjectCompanies(project.id, currentPage)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe(x -> progress.show())
@@ -92,7 +92,6 @@ public class ProjectCompanyFragment extends Fragment {
 
     //-> handleResults
     private void handleGetProjectCompanies(Response<GetListModel<ProjectCompanyViewModel>> response){
-        Log.d(TAG, "handleGetProjectCompanies: ");
         switch (response.code()) {
             case 200:
                 IRecyclerViewClickListener listener = new IRecyclerViewClickListener() {
@@ -112,8 +111,8 @@ public class ProjectCompanyFragment extends Fragment {
                 rcvProjectCompany.setAdapter(projectCompanyAdapter);
                 break;
 
-            case 500:
-                ApiErrorHelper.statusCode500(getActivity());
+            case 401:
+                ApiErrorHelper.statusCode401(getActivity());
                 break;
 
             default:

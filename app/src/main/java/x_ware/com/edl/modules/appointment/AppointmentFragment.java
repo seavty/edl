@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import java.io.Serializable;
 import java.util.Calendar;
@@ -27,6 +28,7 @@ import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
 import x_ware.com.edl.R;
 import x_ware.com.edl.adapters.appointment.AppointmentAdapter;
+import x_ware.com.edl.modules.auth.LoginActivity;
 import x_ware.com.edl.networking.api.IAppointmentAPI;
 import x_ware.com.edl.helpers.ApiErrorHelper;
 import x_ware.com.edl.helpers.DateTimeHelper;
@@ -98,7 +100,7 @@ public class AppointmentFragment extends Fragment {
     //-> getAppointments
     private void getAppointments() {
         try {
-            RetrofitProvider.get(getActivity().getBaseContext()).create(IAppointmentAPI.class).searchAppointments(currentPage, DateTimeHelper.convert_dd_mm_yyyy_To_yyyy_mm_dd(txtDate.getText().toString()))
+            RetrofitProvider.get(getActivity()).create(IAppointmentAPI.class).searchAppointments(currentPage, DateTimeHelper.convert_dd_mm_yyyy_To_yyyy_mm_dd(txtDate.getText().toString()))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe(x -> progress.show())
@@ -132,6 +134,10 @@ public class AppointmentFragment extends Fragment {
                 List<AppointmentViewModel> appointments = response.body().items;
                 appointmentAdapter = new AppointmentAdapter(appointments, getActivity(), listener);
                 rcvAppointment.setAdapter(appointmentAdapter);
+                break;
+
+            case 401:
+                ApiErrorHelper.statusCode401(getActivity());
                 break;
 
             default:

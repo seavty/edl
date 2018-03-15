@@ -83,7 +83,7 @@ public class ProjectActivity extends AppCompatActivity {
     //-> getProjects()
     private void getProjects(){
         try {
-            RetrofitProvider.get().create(IProjectAPI.class).getProjectsBoundWithCompany(appointment.id, currentPage)
+            RetrofitProvider.get(this).create(IProjectAPI.class).getProjectsBoundWithCompany(appointment.id, currentPage)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe(x -> progress.show())
@@ -118,7 +118,11 @@ public class ProjectActivity extends AppCompatActivity {
                 rcvProject.setAdapter(projectAdapter);
                 break;
 
-            case 500:
+            case 401:
+                ApiErrorHelper.statusCode401(this);
+                break;
+
+            default:
                 ApiErrorHelper.statusCode500(this);
                 break;
         }
