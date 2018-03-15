@@ -1,16 +1,22 @@
 package x_ware.com.edl.modules.auth;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -34,15 +40,22 @@ import x_ware.com.edl.networking.models.user.UserModel;
 import x_ware.com.edl.networking.models.user.UserLoginModel;
 import x_ware.com.edl.networking.RetrofitProvider;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements LocationListener {
     private static final String TAG = "LoginActivity";
     private EditText txtUserName, txtPassword;
     private Button btnLogin, btnClear;
     private ProgressDialog progress;
 
     private BroadcastReceiver broadcastReceiver;
-
     private int count = 0;
+
+
+    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 2;
+    private boolean locationPermissionGranted = false;
+    private LocationManager locationManager;
+    private Location location;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,8 +81,33 @@ public class LoginActivity extends AppCompatActivity {
 
         */
 
+        //testLocation();
+
         
     }
+    private void testLocation(){
+        Toast.makeText(this, "test location", Toast.LENGTH_SHORT).show();
+        locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        requestLocation();
+    }
+
+    @SuppressLint("MissingPermission")
+    private void requestLocation()
+    {
+        getLocationPermission();
+        assert locationManager != null;
+        if (locationPermissionGranted)
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1, 0, this);
+    }
+
+    private void getLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            locationPermissionGranted = true;
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+        }
+    }
+
     //-> setUpViews
     private void setUpViews() {
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -108,6 +146,8 @@ public class LoginActivity extends AppCompatActivity {
 
     //-> login
     private void login() {
+        testLocation();
+        /*
         if (validation()) {
             try {
                 UserLoginModel user = new UserLoginModel();
@@ -123,6 +163,7 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d(TAG, "login: " + ex.getMessage());
             }
         }
+        */
 
     }
 
@@ -154,5 +195,49 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        this.location = location;
+        //tvLongitude.setText(String.valueOf(location.getLongitude()));
+        //tvLatitude.setText(String.valueOf(location.getLatitude()));
+        Log.d(TAG, "onLocationChanged: ");
+        Log.d(TAG, "onLocationChanged: " + location.getLongitude());
+        Log.d(TAG, "onLocationChanged: " + location.getLatitude());
+        
+        locationManager.removeUpdates(this);
+    }
+
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String s) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String s) {
+        startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults)
+    {
+        locationPermissionGranted = false;
+        switch (requestCode)
+        {
+            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION:
+            {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                {
+                    locationPermissionGranted = true;
+                }
+            }
+        }
     }
 }
