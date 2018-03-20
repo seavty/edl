@@ -1,6 +1,7 @@
 package x_ware.com.edl.modules.project;
 
 import android.support.design.widget.TabLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -9,7 +10,9 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import static maes.tech.intentanim.CustomIntent.customType;
 import x_ware.com.edl.R;
@@ -48,6 +51,7 @@ public class ProjectDetailActivity extends AppCompatActivity {
             R.drawable.ic_rss_feed_white_24px
     };
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,7 +82,6 @@ public class ProjectDetailActivity extends AppCompatActivity {
             project = (ProjectViewModel) getIntent().getSerializableExtra("ProjectViewModel");
             lblProjectName.setText(project.description);
         }
-
     }
 
     private void setupViewPager() {
@@ -117,4 +120,10 @@ public class ProjectDetailActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
+
+
+
+
 }

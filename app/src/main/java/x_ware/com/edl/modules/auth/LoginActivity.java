@@ -1,9 +1,11 @@
 package x_ware.com.edl.modules.auth;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -19,11 +21,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+
+import com.mindorks.paracamera.Camera;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
 import x_ware.com.edl.MainActivity;
 import x_ware.com.edl.R;
+import x_ware.com.edl.helpers.ImageHelper;
 import x_ware.com.edl.networking.api.IUserAPI;
 import x_ware.com.edl.helpers.ApiHelper;
 import x_ware.com.edl.helpers.PreferenceHelper;
@@ -32,6 +38,9 @@ import x_ware.com.edl.helpers.ProgressDialogHelper;
 import x_ware.com.edl.networking.models.user.UserModel;
 import x_ware.com.edl.networking.models.user.UserLoginModel;
 import x_ware.com.edl.networking.RetrofitProvider;
+
+
+
 
 public class LoginActivity extends AppCompatActivity implements LocationListener {
     private static final String TAG = "LoginActivity";
@@ -45,7 +54,8 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
     private LocationManager locationManager;
     private Location location;
 
-
+    //--for test camera
+    Camera camera;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +68,22 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
     private void initializeComponents() {
         setUpViews();
         setUpEvents();
+        camera = new Camera.Builder()
+                .resetToCorrectOrientation(true)// it will rotate the camera bitmap to the correct orientation from meta data
+                .setTakePhotoRequestCode(1)
+                .setDirectory("pics")
+                .setName("ali_" + System.currentTimeMillis())
+                .setImageFormat(Camera.IMAGE_JPEG)
+                .setCompression(75)
+                .setImageHeight(1000)// it will try to achieve this height as close as possible maintaining the aspect ratio;
+                .build(this);
+
+        try {
+            camera.takePicture();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
 
     }
     private void testLocation(){
@@ -67,8 +93,7 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
     }
 
     @SuppressLint("MissingPermission")
-    private void requestLocation()
-    {
+    private void requestLocation() {
         getLocationPermission();
         assert locationManager != null;
         if (locationPermissionGranted)
@@ -78,7 +103,8 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
     private void getLocationPermission() {
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             locationPermissionGranted = true;
-        } else {
+        }
+        else {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
     }
@@ -121,8 +147,10 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
 
     //-> login
     private void login() {
+
         //testLocation();
 
+        /*
         if (validation()) {
             try {
                 UserLoginModel user = new UserLoginModel();
@@ -138,6 +166,7 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
                 Log.d(TAG, "login: " + ex.getMessage());
             }
         }
+        */
 
     }
 
@@ -202,19 +231,41 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
         startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
     }
 
+
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults)
-    {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        // permission for location
         locationPermissionGranted = false;
-        switch (requestCode)
-        {
-            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION:
-            {
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     locationPermissionGranted = true;
                 }
+            }
+        }
+
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == Camera.REQUEST_TAKE_PHOTO){
+            Bitmap bitmap = camera.getCameraBitmap();
+            if(bitmap != null) {
+                Toast.makeText(this, "photo ok", Toast.LENGTH_SHORT).show();
+                //convert the bitmap to bytes
+                byte[] bytesArray =  ImageHelper.bitmapToBytes(camera.getCameraBitmap(), ImageHelper.PNG);
+
+                //convert the bytes to string 64, with this form is easly to send by web service or store data in DB
+                String imageBase64 = ImageHelper.bytesToStringBase64(bytesArray);
+                //Log.d(TAG, "onActivityResult: " + imageBase64);
+
+            }
+            else{
+                Toast.makeText(this.getApplicationContext(),"Picture not taken!",Toast.LENGTH_SHORT).show();
             }
         }
     }

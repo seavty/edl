@@ -47,4 +47,13 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:11.8.0'
     implementation 'com.github.hajiyevelnur92:intentanimation:1.0'
 
+    //implementation 'com.frosquivel:magicalcamera:5.0.5'
+
+    /*
+    implementation('com.frosquivel:magicalcamera:5.0.5@aar') {
+        transitive = false;
+    }
+    */
+
+    implementation 'com.mindorks:paracamera:0.2.2'
 }
