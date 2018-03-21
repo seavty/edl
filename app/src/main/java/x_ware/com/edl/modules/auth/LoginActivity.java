@@ -68,6 +68,8 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
     private void initializeComponents() {
         setUpViews();
         setUpEvents();
+
+        /*
         camera = new Camera.Builder()
                 .resetToCorrectOrientation(true)// it will rotate the camera bitmap to the correct orientation from meta data
                 .setTakePhotoRequestCode(1)
@@ -83,9 +85,11 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
+        */
 
 
     }
+
     private void testLocation(){
         Toast.makeText(this, "test location", Toast.LENGTH_SHORT).show();
         locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
@@ -147,10 +151,7 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
 
     //-> login
     private void login() {
-
         //testLocation();
-
-        /*
         if (validation()) {
             try {
                 UserLoginModel user = new UserLoginModel();
@@ -166,8 +167,6 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
                 Log.d(TAG, "login: " + ex.getMessage());
             }
         }
-        */
-
     }
 
     //-> handleLogin
@@ -255,18 +254,37 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
         if(requestCode == Camera.REQUEST_TAKE_PHOTO){
             Bitmap bitmap = camera.getCameraBitmap();
             if(bitmap != null) {
+
+
                 Toast.makeText(this, "photo ok", Toast.LENGTH_SHORT).show();
+                /*
                 //convert the bitmap to bytes
                 byte[] bytesArray =  ImageHelper.bitmapToBytes(camera.getCameraBitmap(), ImageHelper.PNG);
 
                 //convert the bytes to string 64, with this form is easly to send by web service or store data in DB
                 String imageBase64 = ImageHelper.bytesToStringBase64(bytesArray);
-                //Log.d(TAG, "onActivityResult: " + imageBase64);
+                Log.d(TAG, "onActivityResult: " + imageBase64);
+
+
+                UserLoginModel user = new UserLoginModel();
+                user.userName = txtUserName.getText().toString().trim();
+                user.password = imageBase64;
+                RetrofitProvider.get().create(IUserAPI.class).login(user)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnSubscribe(x -> progress.show())
+                        .doOnComplete(() -> progress.dismiss())
+                        .subscribe(this::test, this::handleError);
+                 */
 
             }
             else{
                 Toast.makeText(this.getApplicationContext(),"Picture not taken!",Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private void test(Response<UserModel> response){
+
     }
 }

@@ -274,10 +274,13 @@
                             android:layout_height="wrap_content"
                             android:gravity="center">
 
-                            <ImageView
+                            <ImageButton
+                                android:id="@+id/imbCamera"
                                 android:layout_width="128dp"
                                 android:layout_height="128dp"
-                                android:src="@drawable/camera" />
+                                android:src="@drawable/camera"
+                                android:background="@null"
+                                android:scaleType="centerCrop" />
                         </LinearLayout>
                         <!-- image view camera  -->
                     </LinearLayout>

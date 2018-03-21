@@ -45,4 +45,10 @@ public interface IAppointmentAPI {
     @POST("communications/Create")
     Observable<Response<AppointmentViewModel>> createNewAppointment(@Body AppointmentNewModel newAppointmentModel);
 
+
+    @POST("communications/{id}")
+    Observable<Response<AppointmentViewModel>> postImage(@Path("id") int id,
+                                                         @Query("base64String") String base64String,
+                                                         @Query("fileName") String fileName);
+
 }

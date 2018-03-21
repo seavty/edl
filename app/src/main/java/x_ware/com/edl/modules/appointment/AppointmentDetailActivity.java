@@ -4,7 +4,9 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -25,20 +27,30 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.mindorks.paracamera.Camera;
+
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
+import x_ware.com.edl.MainActivity;
 import x_ware.com.edl.R;
 import x_ware.com.edl.helpers.ApiHelper;
 import x_ware.com.edl.helpers.DateTimeHelper;
+import x_ware.com.edl.helpers.ImageHelper;
+import x_ware.com.edl.helpers.PreferenceHelper;
+import x_ware.com.edl.helpers.PreferenceKeyHelper;
+import x_ware.com.edl.modules.auth.LoginActivity;
 import x_ware.com.edl.networking.api.IAppointmentAPI;
 import x_ware.com.edl.helpers.ProgressDialogHelper;
+import x_ware.com.edl.networking.api.IUserAPI;
 import x_ware.com.edl.networking.models.appointment.AppointmentCheckInModel;
 import x_ware.com.edl.networking.models.appointment.AppointmentCheckOutModel;
 import x_ware.com.edl.networking.models.appointment.AppointmentEditDetailModel;
 import x_ware.com.edl.networking.models.appointment.AppointmentViewModel;
 import x_ware.com.edl.networking.RetrofitProvider;
+import x_ware.com.edl.networking.models.user.UserLoginModel;
+import x_ware.com.edl.networking.models.user.UserModel;
 
 public class AppointmentDetailActivity extends AppCompatActivity implements AppointmentDetailDialog.AppointmentDetailDialogListener {
     private static final String TAG = "AppointmentDetailActivi";
@@ -46,13 +58,16 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
     private ProgressDialog progress;
     private TextView lblTiming, lblCompanyName, lblPhoneNumber, lblSubject, lblDetail;
     private Button btnCheckInOrCheckOut;
-    private ImageButton imbEditSubject;
+    private ImageButton imbEditSubject, imbCamera;
     private ImageView imgAction;
+
 
     private AppointmentViewModel appointment;
 
     static final int REQUEST_LOCATION = 1;
     private FusedLocationProviderClient mFusedLocationClient;
+
+    private Camera camera;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +84,62 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
         setUpViews();
         setUpEvents();
         getAppointment();
+
+       // Toast.makeText(this, "" + appointment.id, Toast.LENGTH_SHORT).show();
+
+        /*
+        camera = new Camera.Builder()
+                .setDirectory("pics")
+                .setName("ali_" + System.currentTimeMillis())
+                .setImageFormat(Camera.IMAGE_JPEG)
+                .setCompression(75)
+                .setImageHeight(1000)
+                .build(this);
+        try {
+            camera.takePicture();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        */
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Camera.REQUEST_TAKE_PHOTO) {
+            Bitmap bitmap = camera.getCameraBitmap();
+            if (bitmap != null) {
+                //picFrame.setImageBitmap(bitmap);
+                //Toast.makeText(this, "ok" , Toast.LENGTH_SHORT).show();
+                postImage(bitmap);
+            }
+            else {
+                Toast.makeText(this.getApplicationContext(), "Picture not taken!", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void postImage(Bitmap bitmap){
+        try {
+            //convert the bitmap to bytes
+            //byte[] bytesArray =  ImageHelper.bitmapToBytes(bitmap, ImageHelper.PNG);
+            //String imageBase64 = ImageHelper.bytesToStringBase64(bytesArray);
+            String imageBase64 = "test";
+            RetrofitProvider.get(this).create(IAppointmentAPI.class).postImage(appointment.id, imageBase64, "test")
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnSubscribe(x -> progress.show())
+                    .doOnComplete(() -> progress.dismiss())
+                    .subscribe(this::handlePostImage, this::handleError);
+        } catch (Exception ex) {
+            Log.d(TAG, "getAppointment: " + ex.getMessage());
+        }
+    }
+
+    private void handlePostImage(Response<AppointmentViewModel> response){
+
+    }
+
 
     //-> setUpViews()
     private void setUpViews() {
@@ -89,6 +159,8 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
         btnCheckInOrCheckOut = findViewById(R.id.btnCheckInOrCheckOut);
 
         imbEditSubject = findViewById(R.id.imbEditDetail);
+        imbCamera = findViewById(R.id.imbCamera);
+
         imgAction = findViewById(R.id.imgAction);
     }
 
@@ -109,6 +181,28 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
                 .show());
 
         imbEditSubject.setOnClickListener(view -> openDetailDialog());
+
+        imbCamera.setOnClickListener(view -> openCamera());
+    }
+
+    //-> openCamera
+    private void openCamera(){
+        Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
+        camera = new Camera.Builder()
+                .resetToCorrectOrientation(true)// it will rotate the camera bitmap to the correct orientation from meta data
+                .setTakePhotoRequestCode(1)
+                .setDirectory("pics")
+                .setName("ali_" + System.currentTimeMillis())
+                .setImageFormat(Camera.IMAGE_JPEG)
+                .setCompression(75)
+                .setImageHeight(1000)// it will try to achieve this height as close as possible maintaining the aspect ratio;
+                .build(this);
+
+        try {
+            camera.takePicture();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     //-> getAppointment()
@@ -373,4 +467,5 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
             displayData();
         }
     }
+
 }
