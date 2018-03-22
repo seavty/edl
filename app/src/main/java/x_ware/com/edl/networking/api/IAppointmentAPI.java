@@ -1,5 +1,6 @@
 package x_ware.com.edl.networking.api;
 
+import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -12,8 +13,10 @@ import x_ware.com.edl.networking.models.appointment.AppointmentCheckInModel;
 import x_ware.com.edl.networking.models.appointment.AppointmentCheckOutModel;
 import x_ware.com.edl.networking.models.appointment.AppointmentEditDetailModel;
 import x_ware.com.edl.networking.models.appointment.AppointmentNewModel;
+import x_ware.com.edl.networking.models.appointment.AppointmentUploadImage;
 import x_ware.com.edl.networking.models.appointment.AppointmentViewModel;
 import io.reactivex.Observable;
+import x_ware.com.edl.networking.models.user.UserLoginModel;
 
 /**
  * Created by buneavros on 2/20/18.
@@ -46,9 +49,7 @@ public interface IAppointmentAPI {
     Observable<Response<AppointmentViewModel>> createNewAppointment(@Body AppointmentNewModel newAppointmentModel);
 
 
-    @POST("communications/{id}")
-    Observable<Response<AppointmentViewModel>> postImage(@Path("id") int id,
-                                                         @Query("base64String") String base64String,
-                                                         @Query("fileName") String fileName);
+    @POST("communications/{id}/upload")
+    Observable<Response<Void>> uploadImage(@Path("id") int id, @Body AppointmentUploadImage appointmentUploadImage);
 
 }
