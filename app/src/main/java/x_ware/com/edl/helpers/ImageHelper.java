@@ -12,14 +12,26 @@ import java.io.ByteArrayOutputStream;
 
 public class ImageHelper {
 
+    /*
     //compress format public static variables
     public static final Bitmap.CompressFormat JPEG = Bitmap.CompressFormat.JPEG;
     public static final Bitmap.CompressFormat PNG = Bitmap.CompressFormat.PNG;
     public static final Bitmap.CompressFormat WEBP = Bitmap.CompressFormat.WEBP;
+    */
+
+    public static String convertBitmapToBase64(Bitmap bitmap){
+        ByteArrayOutputStream bao = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, bao);
+        byte[] ba = bao.toByteArray();
+        return Base64.encodeToString(ba, Base64.DEFAULT);
+    }
+
+
     //================================================================================
     // Conversion Methods
     //================================================================================
 
+    /* == tmp comment -> maybe use these function in the future
     public static Bitmap resizeImageRunTime(byte[] byteArray, int width, int height, boolean isFilter){
         Bitmap b = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
         return Bitmap.createScaledBitmap(b, width, height, isFilter);
@@ -52,5 +64,6 @@ public class ImageHelper {
         byte[] byteArray = Base64.decode(stringBase64, Base64.DEFAULT);
         return byteArray;
     }
+    */
     //endregion
 }
