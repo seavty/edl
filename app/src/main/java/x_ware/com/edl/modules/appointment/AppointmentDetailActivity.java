@@ -40,11 +40,15 @@ import java.io.ByteArrayOutputStream;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
+import x_ware.com.edl.MainActivity;
 import x_ware.com.edl.R;
 import x_ware.com.edl.helpers.ApiHelper;
 import x_ware.com.edl.helpers.CameraHelper;
 import x_ware.com.edl.helpers.DateTimeHelper;
 import x_ware.com.edl.helpers.ImageHelper;
+import x_ware.com.edl.helpers.PreferenceHelper;
+import x_ware.com.edl.helpers.PreferenceKeyHelper;
+import x_ware.com.edl.modules.auth.LoginActivity;
 import x_ware.com.edl.networking.api.IAppointmentAPI;
 import x_ware.com.edl.helpers.ProgressDialogHelper;
 import x_ware.com.edl.networking.models.appointment.AppointmentCheckInModel;
@@ -70,6 +74,8 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
     private FusedLocationProviderClient mFusedLocationClient;
 
     private Uri fileUri;
+
+    private boolean isCheckOut=false;
 
 
     @Override
@@ -221,8 +227,11 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
                 imbCamera.setVisibility(View.VISIBLE);
             }
 
-            if (appointment.checkIncheckOut.equals("Checked Out"))
+            if (appointment.checkIncheckOut.equals("Checked Out")) {
                 btnCheckInOrCheckOut.setEnabled(false);
+                //startActivity(new Intent(this, MainActivity.class));
+                //finish();
+            }
         }
         displayDrawable(appointment.action);
     }
@@ -354,6 +363,7 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
                 .addOnSuccessListener(location -> {
                     // GPS location can be null if GPS is switched off
                     if (location != null) {
+                        isCheckOut = true;
                         AppointmentCheckOutModel checkout = new AppointmentCheckOutModel();
                         checkout.id = appointment.id;
                         checkout.latitude = location.getLatitude();
@@ -414,7 +424,15 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
 
     //-> handleCheckInOrCheckOut
     private void handleCheckInOrCheckOut(Response<AppointmentViewModel> response) {
+        if(isCheckOut) {
+            Toast.makeText(this, "Successfully checked out", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+            return;
+        }
+
         if(ApiHelper.isSuccessful(this, response.code())){
+            Toast.makeText(this, "Successfully checked in", Toast.LENGTH_SHORT).show();
             appointment = response.body();
             displayData();
         }
