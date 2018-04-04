@@ -11,7 +11,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.Serializable;
 import java.util.List;
 
 import x_ware.com.edl.R;
@@ -19,7 +18,6 @@ import x_ware.com.edl.helpers.DateTimeHelper;
 import x_ware.com.edl.interfaces.IRecyclerViewClickListener;
 import x_ware.com.edl.networking.models.appointment.AppointmentViewModel;
 import x_ware.com.edl.modules.project.ProjectActivity;
-import x_ware.com.edl.networking.models.project.ProjectCommunicationViewModel;
 
 /**
  * Created by buneavros on 2/21/18.
@@ -48,7 +46,8 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
     public void onBindViewHolder(AppointmentAdapter.ViewHolder holder, int position) {
         AppointmentViewModel appointment = appointments.get(position);
         //-- remember id must convert to text first before setting
-        holder.lblTiming.setText(DateTimeHelper.convert_yyyy_mm_dd_t_hh_mm_ss_To_dd_mm_yyy_hh_mm(appointment.timing));
+        //holder.lblTiming.setText(DateTimeHelper.convert_yyyy_mm_dd_t_hh_mm_ss_To_dd_mm_yyy_hh_mm(appointment.timing));
+        holder.lblTiming.setText(DateTimeHelper.convert_yyyy_mm_dd_t_hh_mm_ss_To_hh_mm_With_am_pm(appointment.timing));
         holder.lblCompanyName.setText(appointment.companyName);
         holder.lblAddress.setText(appointment.address);
 

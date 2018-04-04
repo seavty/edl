@@ -41,6 +41,32 @@ public class DateTimeHelper {
         return useDate + " " + useTime;
     }
 
+    public static String convert_yyyy_mm_dd_t_hh_mm_ss_To_hh_mm_With_am_pm(String s){
+        if(s == null || s.equals(""))
+            return "" ;
+        String [] splitDateTime = s.split("T");
+
+        String date[] = splitDateTime[0].split("-");
+        String useDate = date[2] + "-" + date[1] + "-" + date[0];
+
+        String time[] = splitDateTime[1].split(":");
+        String useTime = time[0] + ":" + time[1];
+        //return useTime;
+        String amOrpm = "AM";
+        int hour = Integer.parseInt(time[0]);
+        String minute = time[1];
+
+        if(hour >= 12) {
+            amOrpm = "PM";
+            if(hour > 12) {
+                hour = Math.abs(hour - 12);
+            }
+        }
+
+        String hourStr = ( hour < 9) ? "0" + hour: hour + "";
+        //return hour + ":" + minute + " " +  amOrpm;
+        return hourStr + ":" + minute + " " +  amOrpm;
+    }
 
     public static String get_dd_mm_yyy(int year, int month, int day){
         String m = ( month < 10) ? "0" + month: month + "";

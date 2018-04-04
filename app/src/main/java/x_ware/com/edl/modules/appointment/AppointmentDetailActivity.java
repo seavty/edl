@@ -6,9 +6,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,7 +15,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,10 +29,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.mindorks.paracamera.Camera;
 
-
-import java.io.ByteArrayOutputStream;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -46,9 +40,6 @@ import x_ware.com.edl.helpers.ApiHelper;
 import x_ware.com.edl.helpers.CameraHelper;
 import x_ware.com.edl.helpers.DateTimeHelper;
 import x_ware.com.edl.helpers.ImageHelper;
-import x_ware.com.edl.helpers.PreferenceHelper;
-import x_ware.com.edl.helpers.PreferenceKeyHelper;
-import x_ware.com.edl.modules.auth.LoginActivity;
 import x_ware.com.edl.networking.api.IAppointmentAPI;
 import x_ware.com.edl.helpers.ProgressDialogHelper;
 import x_ware.com.edl.networking.models.appointment.AppointmentCheckInModel;
@@ -214,7 +205,8 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
         imbEditSubject.setVisibility(View.INVISIBLE);
         imbCamera.setVisibility(View.INVISIBLE);
 
-        lblTiming.setText(DateTimeHelper.convert_yyyy_mm_dd_t_hh_mm_ss_To_dd_mm_yyy_hh_mm(appointment.timing));
+        //lblTiming.setText(DateTimeHelper.convert_yyyy_mm_dd_t_hh_mm_ss_To_dd_mm_yyy_hh_mm(appointment.timing));
+        lblTiming.setText(DateTimeHelper.convert_yyyy_mm_dd_t_hh_mm_ss_To_hh_mm_With_am_pm(appointment.timing));
         lblCompanyName.setText(appointment.companyName);
         lblPhoneNumber.setText(appointment.phoneNumber);
         lblSubject.setText(appointment.subject);
