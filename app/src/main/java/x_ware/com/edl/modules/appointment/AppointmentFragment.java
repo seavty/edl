@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.List;
 
@@ -75,7 +76,7 @@ public class AppointmentFragment extends Fragment {
         progress = ProgressDialogHelper.getInstance(getActivity());
 
         txtDate = view.findViewById(R.id.txtDate);
-        txtDate.setText(DateTimeHelper.get_CurrentDate_dd_mm_yyyy());
+        txtDate.setText(DateTimeHelper.get_CurrentDate_dd_mm_yyyy_With_DayName());
         txtDate.setEnabled(false);
         txtDate.setTextColor(Color.BLACK);
 
@@ -96,7 +97,8 @@ public class AppointmentFragment extends Fragment {
     //-> getAppointments
     private void getAppointments() {
         try {
-            RetrofitProvider.get(getActivity()).create(IAppointmentAPI.class).searchAppointments(currentPage, DateTimeHelper.convert_dd_mm_yyyy_To_yyyy_mm_dd(txtDate.getText().toString()))
+            String date = DateTimeHelper.convert_dd_MM_yyyy_EEEE_To_yyyy_MM_dd(txtDate.getText().toString());
+            RetrofitProvider.get(getActivity()).create(IAppointmentAPI.class).searchAppointments(currentPage, date)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe(x -> progress.show())
@@ -151,9 +153,12 @@ public class AppointmentFragment extends Fragment {
         int mDay = c.get(Calendar.DAY_OF_MONTH);
         DatePickerDialog dpd = new DatePickerDialog(getActivity(),
                 (view, year, month, day) -> {
-                    txtDtp.setText(DateTimeHelper.get_dd_mm_yyy(year, (month + 1), day));
-                    getAppointments();
-
+                   try {
+                        txtDtp.setText(DateTimeHelper.convert_year_month_day_To_dd_MM_yyy_EEEE(year, (month + 1), day));
+                        getAppointments();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                 }, mYear, mMonth, mDay);
         dpd.show();
     }
