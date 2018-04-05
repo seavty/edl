@@ -40,7 +40,10 @@ public class AppointmentNewActivity extends AppCompatActivity {
 
     private Spinner spnAction;
 
-    int count = 0;
+    int countStartTime = 0;
+    int countEndTime = 0;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,13 +93,81 @@ public class AppointmentNewActivity extends AppCompatActivity {
         imbSave.setOnClickListener(view -> saveClick());
     }
 
+
+    //** seem like select date then time has error, so need to write duplicate code
+    //-- ** for start time ** --//
     private void startTimeClick(){
-        datePicker(txtStartTime);
+        final Calendar c = Calendar.getInstance();
+        int mYear = c.get(Calendar.YEAR);
+        int mMonth = c.get(Calendar.MONTH);
+        int mDay = c.get(Calendar.DAY_OF_MONTH);
+        DatePickerDialog dpd = new DatePickerDialog(this,
+                (view, year, month, day) -> {
+                    //api >= 21 time picker show only one time
+                    //but api < 21 time picker show two time so we need to use this trick
+                    if(countStartTime == 0 ) {
+                        //timePicker(txtDtp, DateTimeHelper.get_dd_mm_yyy(year, (month+1), day)); // tmp comment
+                        timePickerForStartTime(txtStartTime, DateTimeHelper.get_dd_mm_yyy(year, (month+1), day)); // tmp comment
+                        countStartTime++;
+                    }
+                    else {
+                        countStartTime =0;
+                    }
+                }, mYear, mMonth, mDay);
+        dpd.show();
     }
 
-    private void endTimeClick(){
-        datePicker(txtEndTime);
+    private void timePickerForStartTime(final EditText txt, String dateStr){
+        final Calendar c = Calendar.getInstance();
+        int mHour = c.get(Calendar.HOUR);
+        int mMinute = c.get(Calendar.MINUTE);
+
+        TimePickerDialog tpd = new TimePickerDialog(AppointmentNewActivity.this, (timePicker, hour, minute) -> {
+            String timeSrr= DateTimeHelper.time_HH_MM(hour, minute);
+            txt.setText(dateStr + " " + timeSrr);
+            countStartTime = 0;
+        }, mHour, mMinute, true);
+        tpd.show();
     }
+    //-- ** end for start time ** --//
+
+
+    //-- *** for end time ** --/
+    private void endTimeClick(){
+        final Calendar c = Calendar.getInstance();
+        int mYear = c.get(Calendar.YEAR);
+        int mMonth = c.get(Calendar.MONTH);
+        int mDay = c.get(Calendar.DAY_OF_MONTH);
+        DatePickerDialog dpd = new DatePickerDialog(this,
+                (view, year, month, day) -> {
+                    //api >= 21 time picker show only one time
+                    //but api < 21 time picker show two time so we need to use this trick
+                    if(countEndTime == 0 ) {
+                        //timePicker(txtDtp, DateTimeHelper.get_dd_mm_yyy(year, (month+1), day)); // tmp comment
+                        timePickerForEndTime(txtEndTime, DateTimeHelper.get_dd_mm_yyy(year, (month+1), day)); // tmp comment
+                        countEndTime++;
+                    }
+                    else {
+                        countEndTime =0;
+                    }
+                }, mYear, mMonth, mDay);
+        dpd.show();
+    }
+
+    private void timePickerForEndTime(final EditText txt, String dateStr){
+        final Calendar c = Calendar.getInstance();
+        int mHour = c.get(Calendar.HOUR);
+        int mMinute = c.get(Calendar.MINUTE);
+
+        TimePickerDialog tpd = new TimePickerDialog(AppointmentNewActivity.this, (timePicker, hour, minute) -> {
+            String timeSrr= DateTimeHelper.time_HH_MM(hour, minute);
+            txt.setText(dateStr + " " + timeSrr);
+            countEndTime = 0;
+        }, mHour, mMinute, true);
+        tpd.show();
+    }
+
+    //-- *** end for end time ** --/
 
     private void saveClick(){
         try {
@@ -155,8 +226,7 @@ public class AppointmentNewActivity extends AppCompatActivity {
         }
         return true;
     }
-
-    //-> datePicker
+    /*
     private void datePicker(final EditText txtDtp){
         final Calendar c = Calendar.getInstance();
         int mYear = c.get(Calendar.YEAR);
@@ -166,18 +236,20 @@ public class AppointmentNewActivity extends AppCompatActivity {
                 (view, year, month, day) -> {
                     //api >= 21 time picker show only one time
                     //but api < 21 time picker show two time so we need to use this trick
-                    if(count == 0) {
+                    if(countStartTime == 0 ) {
                         timePicker(txtDtp, DateTimeHelper.get_dd_mm_yyy(year, (month+1), day)); // tmp comment
-                        count++;
+                        countStartTime++;
                     }
                     else {
-                        count =0;
+                        countStartTime =0;
                     }
                 }, mYear, mMonth, mDay);
         dpd.show();
     }
+    */
 
     //-> timePicker
+    /*
     private void timePicker(final EditText txt, String dateStr){
         final Calendar c = Calendar.getInstance();
         int mHour = c.get(Calendar.HOUR);
@@ -189,6 +261,9 @@ public class AppointmentNewActivity extends AppCompatActivity {
         }, mHour, mMinute, true);
         tpd.show();
     }
+    */
+
+
 
     //-> handleSave
     private void handleSave(Response<AppointmentViewModel> response) {
