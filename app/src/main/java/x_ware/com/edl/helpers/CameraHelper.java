@@ -12,7 +12,7 @@ import android.provider.MediaStore;
  * Created by buneavros on 3/23/18.
  */
 
-public class CameraHelper {
+public final class CameraHelper {
 
     public static int REQUEST_TAKE_PHOTO = 701;
 

@@ -12,12 +12,13 @@ import java.lang.reflect.Type;
  * Created by buneavros on 3/6/18.
  */
 
-public class PreferenceHelper {
+public final class PreferenceHelper {
     public static void setString(Context context, String key, String value) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("Cache", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(key, value);
-        editor.apply();
+        //editor.apply();
+        editor.commit();
     }
 
     public static <T extends Serializable> void setSerializeObject(Context context, String key, T value) {

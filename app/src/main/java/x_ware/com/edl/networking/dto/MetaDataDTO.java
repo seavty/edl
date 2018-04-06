@@ -1,4 +1,4 @@
-package x_ware.com.edl.networking.models;
+package x_ware.com.edl.networking.dto;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -8,7 +8,7 @@ import java.io.Serializable;
  * Created by buneavros on 2/20/18.
  */
 
-public class MetaDataModel implements Serializable {
+public class MetaDataDTO implements Serializable {
 
     @SerializedName("currentPage")
     public int currentPage;

@@ -1,7 +1,6 @@
 package x_ware.com.edl.modules.project;
 
 import android.support.design.widget.TabLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -10,14 +9,11 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import static maes.tech.intentanim.CustomIntent.customType;
 import x_ware.com.edl.R;
 import x_ware.com.edl.adapters.ViewPagerAdapter;
-import x_ware.com.edl.networking.models.project.ProjectViewModel;
+import x_ware.com.edl.networking.dto.project.ProjectViewDTO;
 
 public class ProjectDetailActivity extends AppCompatActivity {
     private static final String TAG = "ProjectDetailActivity";
@@ -39,7 +35,7 @@ public class ProjectDetailActivity extends AppCompatActivity {
 
     ViewPagerAdapter myAdapter;
 
-    private ProjectViewModel project;
+    private ProjectViewDTO project;
     private Toolbar toolbar;
     private TabLayout tabLayout;
 
@@ -79,7 +75,7 @@ public class ProjectDetailActivity extends AppCompatActivity {
         lblProjectName = findViewById(R.id.lblProjectName);
 
         if(getIntent() != null && getIntent().hasExtra("ProjectViewModel")) {
-            project = (ProjectViewModel) getIntent().getSerializableExtra("ProjectViewModel");
+            project = (ProjectViewDTO) getIntent().getSerializableExtra("ProjectViewModel");
             lblProjectName.setText(project.description);
         }
     }

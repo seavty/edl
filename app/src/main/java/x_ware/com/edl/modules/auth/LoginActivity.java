@@ -1,6 +1,5 @@
 package x_ware.com.edl.modules.auth;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -29,14 +28,13 @@ import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
 import x_ware.com.edl.MainActivity;
 import x_ware.com.edl.R;
-import x_ware.com.edl.helpers.ImageHelper;
 import x_ware.com.edl.networking.api.IUserAPI;
 import x_ware.com.edl.helpers.ApiHelper;
 import x_ware.com.edl.helpers.PreferenceHelper;
 import x_ware.com.edl.helpers.PreferenceKeyHelper;
 import x_ware.com.edl.helpers.ProgressDialogHelper;
-import x_ware.com.edl.networking.models.user.UserModel;
-import x_ware.com.edl.networking.models.user.UserLoginModel;
+import x_ware.com.edl.networking.dto.user.UserModel;
+import x_ware.com.edl.networking.dto.user.UserLoginDTO;
 import x_ware.com.edl.networking.RetrofitProvider;
 
 
@@ -154,7 +152,7 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
         //testLocation();
         if (validation()) {
             try {
-                UserLoginModel user = new UserLoginModel();
+                UserLoginDTO user = new UserLoginDTO();
                 user.userName = txtUserName.getText().toString().trim();
                 user.password = "";
                 RetrofitProvider.get().create(IUserAPI.class).login(user)

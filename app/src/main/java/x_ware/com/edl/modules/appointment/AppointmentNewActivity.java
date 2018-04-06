@@ -26,8 +26,8 @@ import x_ware.com.edl.helpers.ApiHelper;
 import x_ware.com.edl.helpers.ProgressDialogHelper;
 import x_ware.com.edl.networking.api.IAppointmentAPI;
 import x_ware.com.edl.helpers.DateTimeHelper;
-import x_ware.com.edl.networking.models.appointment.AppointmentNewModel;
-import x_ware.com.edl.networking.models.appointment.AppointmentViewModel;
+import x_ware.com.edl.networking.dto.appointment.AppointmentNewDTO;
+import x_ware.com.edl.networking.dto.appointment.AppointmentViewDTO;
 import x_ware.com.edl.networking.RetrofitProvider;
 
 public class AppointmentNewActivity extends AppCompatActivity {
@@ -95,7 +95,7 @@ public class AppointmentNewActivity extends AppCompatActivity {
 
 
     //** seem like select date then time has error, so need to write duplicate code
-    //-- ** for start time ** --//
+    //-- ** for start time ** --//.
     private void startTimeClick(){
         final Calendar c = Calendar.getInstance();
         int mYear = c.get(Calendar.YEAR);
@@ -173,7 +173,7 @@ public class AppointmentNewActivity extends AppCompatActivity {
         try {
             if(validation()) {
                  //-- use token
-                AppointmentNewModel appointmentNew = new AppointmentNewModel();
+                AppointmentNewDTO appointmentNew = new AppointmentNewDTO();
                 String actionStr = spnAction.getSelectedItem().toString();
                 if(actionStr.equals("Sample Request"))
                     actionStr = "SampleRequest";
@@ -266,7 +266,7 @@ public class AppointmentNewActivity extends AppCompatActivity {
 
 
     //-> handleSave
-    private void handleSave(Response<AppointmentViewModel> response) {
+    private void handleSave(Response<AppointmentViewDTO> response) {
         if(ApiHelper.isSuccessful(this, response.code())){
             Toast.makeText(this, "Successfully created appointment", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, MainActivity.class));

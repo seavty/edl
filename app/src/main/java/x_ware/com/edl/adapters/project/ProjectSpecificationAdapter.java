@@ -11,8 +11,7 @@ import java.util.List;
 
 import x_ware.com.edl.R;
 import x_ware.com.edl.interfaces.IRecyclerViewClickListener;
-import x_ware.com.edl.networking.models.project.ProjectCommunicationViewModel;
-import x_ware.com.edl.networking.models.project.ProjectSpecificationViewModel;
+import x_ware.com.edl.networking.dto.project.ProjectSpecificationViewDTO;
 
 /**
  * Created by buneavros on 2/23/18.
@@ -21,11 +20,11 @@ import x_ware.com.edl.networking.models.project.ProjectSpecificationViewModel;
 public class ProjectSpecificationAdapter extends RecyclerView.Adapter<ProjectSpecificationAdapter.ViewHolder> {
 
     private static final String TAG = "ProjectSpecificationAda";
-    private List<ProjectSpecificationViewModel> projectSpecifications;
+    private List<ProjectSpecificationViewDTO> projectSpecifications;
     private Context context;
     private IRecyclerViewClickListener listener;
 
-    public ProjectSpecificationAdapter(List<ProjectSpecificationViewModel> projectSpecifications, Context context, IRecyclerViewClickListener listener) {
+    public ProjectSpecificationAdapter(List<ProjectSpecificationViewDTO> projectSpecifications, Context context, IRecyclerViewClickListener listener) {
         this.projectSpecifications = projectSpecifications;
         this.context = context;
         this.listener = listener;
@@ -38,7 +37,7 @@ public class ProjectSpecificationAdapter extends RecyclerView.Adapter<ProjectSpe
 
     @Override
     public void onBindViewHolder(ProjectSpecificationAdapter.ViewHolder holder, int position) {
-        ProjectSpecificationViewModel projectSpecification = projectSpecifications.get(position);
+        ProjectSpecificationViewDTO projectSpecification = projectSpecifications.get(position);
         //-- remember id must convert to text first before setting
         holder.lblProductCode.setText(projectSpecification.productCode);
         holder.lblRemarks.setText(projectSpecification.remarks);
@@ -64,13 +63,13 @@ public class ProjectSpecificationAdapter extends RecyclerView.Adapter<ProjectSpe
 
         @Override
         public void onClick(View view) {
-            ProjectSpecificationViewModel projectSpecification = projectSpecifications.get(getAdapterPosition());
+            ProjectSpecificationViewDTO projectSpecification = projectSpecifications.get(getAdapterPosition());
             listener.onClick(view, getAdapterPosition(), projectSpecification);
         }
 
         @Override
         public boolean onLongClick(View view) {
-            ProjectSpecificationViewModel projectSpecification = projectSpecifications.get(getAdapterPosition());
+            ProjectSpecificationViewDTO projectSpecification = projectSpecifications.get(getAdapterPosition());
             listener.onLongClick(view, getAdapterPosition(), projectSpecification);
             return true;
         }

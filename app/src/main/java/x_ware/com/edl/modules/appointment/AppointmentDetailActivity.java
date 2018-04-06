@@ -42,11 +42,11 @@ import x_ware.com.edl.helpers.DateTimeHelper;
 import x_ware.com.edl.helpers.ImageHelper;
 import x_ware.com.edl.networking.api.IAppointmentAPI;
 import x_ware.com.edl.helpers.ProgressDialogHelper;
-import x_ware.com.edl.networking.models.appointment.AppointmentCheckInModel;
-import x_ware.com.edl.networking.models.appointment.AppointmentCheckOutModel;
-import x_ware.com.edl.networking.models.appointment.AppointmentEditDetailModel;
-import x_ware.com.edl.networking.models.appointment.AppointmentUploadImage;
-import x_ware.com.edl.networking.models.appointment.AppointmentViewModel;
+import x_ware.com.edl.networking.dto.appointment.AppointmentCheckInDTO;
+import x_ware.com.edl.networking.dto.appointment.AppointmentCheckOutDTO;
+import x_ware.com.edl.networking.dto.appointment.AppointmentEditDetailDTO;
+import x_ware.com.edl.networking.dto.appointment.AppointmentUploadDTO;
+import x_ware.com.edl.networking.dto.appointment.AppointmentViewDTO;
 import x_ware.com.edl.networking.RetrofitProvider;
 
 public class AppointmentDetailActivity extends AppCompatActivity implements AppointmentDetailDialog.AppointmentDetailDialogListener {
@@ -54,12 +54,13 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
 
     private ProgressDialog progress;
     private TextView lblTiming, lblCompanyName, lblPhoneNumber, lblSubject, lblDetail;
+    private TextView lblContactPerson;
     private Button btnCheckInOrCheckOut;
     private ImageButton imbEditSubject, imbCamera;
     private ImageView imgAction;
 
 
-    private AppointmentViewModel appointment;
+    private AppointmentViewDTO appointment;
 
     static final int REQUEST_LOCATION = 1;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -79,7 +80,7 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
     //-> initializeComponents
     private void initializeComponents() {
         if (getIntent() != null && getIntent().hasExtra("AppointmentViewModel"))
-            appointment = (AppointmentViewModel) getIntent().getSerializableExtra("AppointmentViewModel");
+            appointment = (AppointmentViewDTO) getIntent().getSerializableExtra("AppointmentViewModel");
 
         setUpViews();
         setUpEvents();
@@ -94,7 +95,7 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
                 Bitmap bitmap = CameraHelper.getCameraBitmap(data, this);
                 String base64 = ImageHelper.convertBitmapToBase64(bitmap);
 
-                AppointmentUploadImage uploadImage = new AppointmentUploadImage();
+                AppointmentUploadDTO uploadImage = new AppointmentUploadDTO();
                 uploadImage.id = appointment.id;
                 uploadImage.base64 = base64;
                 RetrofitProvider.get(this).create(IAppointmentAPI.class).uploadImage(appointment.id, uploadImage)
@@ -131,6 +132,8 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
         lblPhoneNumber = findViewById(R.id.lblPhoneNumber);
         lblSubject = findViewById(R.id.lblSubject);
         lblDetail = findViewById(R.id.lblDetail);
+
+        lblContactPerson = findViewById(R.id.lblContactPerson);
 
         btnCheckInOrCheckOut = findViewById(R.id.btnCheckInOrCheckOut);
 
@@ -187,7 +190,7 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
     }
 
     //-> handleGetAppointment
-    private void handleGetAppointment(Response<AppointmentViewModel> response) {
+    private void handleGetAppointment(Response<AppointmentViewDTO> response) {
         if(ApiHelper.isSuccessful(this, response.code())){
             appointment = response.body();
             displayData();
@@ -208,6 +211,7 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
         //lblTiming.setText(DateTimeHelper.convert_yyyy_mm_dd_t_hh_mm_ss_To_dd_mm_yyy_hh_mm(appointment.timing));
         lblTiming.setText(DateTimeHelper.convert_yyyy_mm_dd_t_hh_mm_ss_To_hh_mm_With_am_pm(appointment.timing));
         lblCompanyName.setText(appointment.companyName);
+        lblContactPerson.setText(appointment.fullName);
         lblPhoneNumber.setText(appointment.phoneNumber);
         lblSubject.setText(appointment.subject);
         lblDetail.setText(appointment.details);
@@ -356,7 +360,7 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
                     // GPS location can be null if GPS is switched off
                     if (location != null) {
                         isCheckOut = true;
-                        AppointmentCheckOutModel checkout = new AppointmentCheckOutModel();
+                        AppointmentCheckOutDTO checkout = new AppointmentCheckOutDTO();
                         checkout.id = appointment.id;
                         checkout.latitude = location.getLatitude();
                         checkout.longitude = location.getLongitude();
@@ -391,7 +395,7 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
                     public void onSuccess(Location location) {
                         // GPS location can be null if GPS is switched off
                         if (location != null) {
-                            AppointmentCheckInModel checkInModel = new AppointmentCheckInModel();
+                            AppointmentCheckInDTO checkInModel = new AppointmentCheckInDTO();
                             checkInModel.id = appointment.id;
                             checkInModel.latitude = location.getLatitude();
                             checkInModel.longitude = location.getLongitude();
@@ -415,7 +419,7 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
     }
 
     //-> handleCheckInOrCheckOut
-    private void handleCheckInOrCheckOut(Response<AppointmentViewModel> response) {
+    private void handleCheckInOrCheckOut(Response<AppointmentViewDTO> response) {
         if(isCheckOut) {
             Toast.makeText(this, "Successfully checked out", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, MainActivity.class));
@@ -431,8 +435,8 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
     }
 
     @Override
-    public void onComplete(AppointmentViewModel appointment) {
-        AppointmentEditDetailModel editDetail = new AppointmentEditDetailModel();
+    public void onComplete(AppointmentViewDTO appointment) {
+        AppointmentEditDetailDTO editDetail = new AppointmentEditDetailDTO();
         editDetail.id = appointment.id;
         editDetail.details = appointment.details;
         RetrofitProvider.get(this).create(IAppointmentAPI.class).editDetail(appointment.id, editDetail)
@@ -444,7 +448,7 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
     }
 
     //-> handleEditDetail
-    private void handleEditDetail(Response<AppointmentViewModel> response) {
+    private void handleEditDetail(Response<AppointmentViewDTO> response) {
         if(ApiHelper.isSuccessful(this, response.code())){
             appointment = response.body();
             displayData();

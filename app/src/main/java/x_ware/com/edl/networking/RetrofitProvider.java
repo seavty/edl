@@ -10,7 +10,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import x_ware.com.edl.helpers.PreferenceHelper;
 import x_ware.com.edl.helpers.PreferenceKeyHelper;
-import x_ware.com.edl.networking.models.user.UserModel;
+import x_ware.com.edl.networking.dto.user.UserModel;
 
 /**
  * Created by buneavros on 2/20/18.

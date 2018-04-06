@@ -22,9 +22,9 @@ import x_ware.com.edl.helpers.ApiHelper;
 import x_ware.com.edl.helpers.ProgressDialogHelper;
 import x_ware.com.edl.networking.api.IProjectAPI;
 import x_ware.com.edl.interfaces.IRecyclerViewClickListener;
-import x_ware.com.edl.networking.models.GetListModel;
-import x_ware.com.edl.networking.models.project.ProjectCompanyViewModel;
-import x_ware.com.edl.networking.models.project.ProjectViewModel;
+import x_ware.com.edl.networking.dto.GetListDTO;
+import x_ware.com.edl.networking.dto.project.ProjectCompanyViewDTO;
+import x_ware.com.edl.networking.dto.project.ProjectViewDTO;
 import x_ware.com.edl.networking.RetrofitProvider;
 
 /**
@@ -40,7 +40,7 @@ public class ProjectCompanyFragment extends Fragment {
     private RecyclerView.Adapter projectCompanyAdapter;
     private RecyclerView rcvProjectCompany;
 
-    private ProjectViewModel project;
+    private ProjectViewDTO project;
 
 
     public ProjectCompanyFragment() {
@@ -67,7 +67,7 @@ public class ProjectCompanyFragment extends Fragment {
         rcvProjectCompany.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         if(getActivity().getIntent() != null && getActivity().getIntent().hasExtra("ProjectViewModel")) {
-            project = (ProjectViewModel) getActivity().getIntent().getSerializableExtra("ProjectViewModel");
+            project = (ProjectViewDTO) getActivity().getIntent().getSerializableExtra("ProjectViewModel");
         }
     }
 
@@ -87,7 +87,7 @@ public class ProjectCompanyFragment extends Fragment {
     }
 
     //-> handleResults
-    private void handleGetProjectCompanies(Response<GetListModel<ProjectCompanyViewModel>> response){
+    private void handleGetProjectCompanies(Response<GetListDTO<ProjectCompanyViewDTO>> response){
         if(ApiHelper.isSuccessful(getActivity(), response.code())){
             IRecyclerViewClickListener listener = new IRecyclerViewClickListener() {
                 @Override
@@ -101,7 +101,7 @@ public class ProjectCompanyFragment extends Fragment {
                 }
             };
 
-            List<ProjectCompanyViewModel> projectCompanies = response.body().items;
+            List<ProjectCompanyViewDTO> projectCompanies = response.body().items;
             projectCompanyAdapter = new ProjectCompanyAdapter(projectCompanies, getActivity(), listener);
             rcvProjectCompany.setAdapter(projectCompanyAdapter);
         }

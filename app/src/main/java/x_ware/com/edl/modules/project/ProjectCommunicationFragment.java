@@ -21,9 +21,9 @@ import x_ware.com.edl.helpers.ApiHelper;
 import x_ware.com.edl.helpers.ProgressDialogHelper;
 import x_ware.com.edl.networking.api.IProjectAPI;
 import x_ware.com.edl.interfaces.IRecyclerViewClickListener;
-import x_ware.com.edl.networking.models.GetListModel;
-import x_ware.com.edl.networking.models.project.ProjectCommunicationViewModel;
-import x_ware.com.edl.networking.models.project.ProjectViewModel;
+import x_ware.com.edl.networking.dto.GetListDTO;
+import x_ware.com.edl.networking.dto.project.ProjectCommunicationViewDTO;
+import x_ware.com.edl.networking.dto.project.ProjectViewDTO;
 import x_ware.com.edl.networking.RetrofitProvider;
 
 /**
@@ -39,7 +39,7 @@ public class ProjectCommunicationFragment extends Fragment {
     private RecyclerView.Adapter projectCommunicationAdapter;
     private RecyclerView rcvProjectCommunication;
 
-    private ProjectViewModel project;
+    private ProjectViewDTO project;
 
     public ProjectCommunicationFragment() {
         // Required empty public constructor
@@ -57,7 +57,7 @@ public class ProjectCommunicationFragment extends Fragment {
     //-> initializeComponents()
     private void initializeComponents(View view){
         if(getActivity().getIntent() != null && getActivity().getIntent().hasExtra("ProjectViewModel"))
-            project = (ProjectViewModel) getActivity().getIntent().getSerializableExtra("ProjectViewModel");
+            project = (ProjectViewDTO) getActivity().getIntent().getSerializableExtra("ProjectViewModel");
 
         setUpViews(view);
         getProjectCommunications();
@@ -87,7 +87,7 @@ public class ProjectCommunicationFragment extends Fragment {
     }
 
     //-> handleResults
-    private void handleGetProjectCommunications(Response<GetListModel<ProjectCommunicationViewModel>> response){
+    private void handleGetProjectCommunications(Response<GetListDTO<ProjectCommunicationViewDTO>> response){
         if(ApiHelper.isSuccessful(getActivity(), response.code())){
             IRecyclerViewClickListener listener = new IRecyclerViewClickListener() {
                 @Override

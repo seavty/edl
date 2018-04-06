@@ -1,4 +1,4 @@
-package x_ware.com.edl.networking.models.user;
+package x_ware.com.edl.networking.dto.user;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -8,7 +8,7 @@ import java.io.Serializable;
  * Created by buneavros on 2/27/18.
  */
 
-public class UserLoginModel implements Serializable{
+public class UserLoginDTO implements Serializable{
 
     @SerializedName("userName")
     public String userName;

@@ -1,4 +1,4 @@
-package x_ware.com.edl.networking.models.appointment;
+package x_ware.com.edl.networking.dto.appointment;
 
 import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
@@ -7,7 +7,7 @@ import java.io.Serializable;
  * Created by buneavros on 2/20/18.
  */
 
-public class AppointmentViewModel implements Serializable {
+public class AppointmentViewDTO implements Serializable {
 
     @SerializedName("id")
     public int id;
@@ -35,4 +35,8 @@ public class AppointmentViewModel implements Serializable {
 
     @SerializedName("action")
     public String action;
+
+
+    @SerializedName("Pers_FullName")
+    public String fullName;
 }

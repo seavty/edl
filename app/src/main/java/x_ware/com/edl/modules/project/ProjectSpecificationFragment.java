@@ -22,9 +22,9 @@ import x_ware.com.edl.helpers.ApiHelper;
 import x_ware.com.edl.helpers.ProgressDialogHelper;
 import x_ware.com.edl.networking.api.IProjectAPI;
 import x_ware.com.edl.interfaces.IRecyclerViewClickListener;
-import x_ware.com.edl.networking.models.GetListModel;
-import x_ware.com.edl.networking.models.project.ProjectSpecificationViewModel;
-import x_ware.com.edl.networking.models.project.ProjectViewModel;
+import x_ware.com.edl.networking.dto.GetListDTO;
+import x_ware.com.edl.networking.dto.project.ProjectSpecificationViewDTO;
+import x_ware.com.edl.networking.dto.project.ProjectViewDTO;
 import x_ware.com.edl.networking.RetrofitProvider;
 
 /**
@@ -40,7 +40,7 @@ public class ProjectSpecificationFragment extends Fragment {
     private RecyclerView.Adapter projectSpecificationAdapter;
     private RecyclerView rcvSpecifications;
 
-    private ProjectViewModel project;
+    private ProjectViewDTO project;
 
     public ProjectSpecificationFragment() {
         // Required empty public constructor
@@ -66,7 +66,7 @@ public class ProjectSpecificationFragment extends Fragment {
         rcvSpecifications.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         if(getActivity().getIntent() != null && getActivity().getIntent().hasExtra("ProjectViewModel")) {
-            project = (ProjectViewModel) getActivity().getIntent().getSerializableExtra("ProjectViewModel");
+            project = (ProjectViewDTO) getActivity().getIntent().getSerializableExtra("ProjectViewModel");
         }
     }
 
@@ -86,7 +86,7 @@ public class ProjectSpecificationFragment extends Fragment {
     }
 
     //-> handleResults
-    private void handleGetProjectSpecifications(Response<GetListModel<ProjectSpecificationViewModel>> response){
+    private void handleGetProjectSpecifications(Response<GetListDTO<ProjectSpecificationViewDTO>> response){
         if(ApiHelper.isSuccessful(getActivity(), response.code())){
             IRecyclerViewClickListener listener = new IRecyclerViewClickListener() {
                 @Override
@@ -100,7 +100,7 @@ public class ProjectSpecificationFragment extends Fragment {
                     Log.d(TAG, "onLongClick: ");
                 }
             };
-            List<ProjectSpecificationViewModel> specifications = response.body().items;
+            List<ProjectSpecificationViewDTO> specifications = response.body().items;
             projectSpecificationAdapter = new ProjectSpecificationAdapter(specifications, getActivity() , listener);
             rcvSpecifications.setAdapter(projectSpecificationAdapter);
         }

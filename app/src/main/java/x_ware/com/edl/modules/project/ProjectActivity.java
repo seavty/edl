@@ -21,9 +21,9 @@ import x_ware.com.edl.helpers.ApiHelper;
 import x_ware.com.edl.networking.api.IProjectAPI;
 import x_ware.com.edl.helpers.ProgressDialogHelper;
 import x_ware.com.edl.interfaces.IRecyclerViewClickListener;
-import x_ware.com.edl.networking.models.GetListModel;
-import x_ware.com.edl.networking.models.appointment.AppointmentViewModel;
-import x_ware.com.edl.networking.models.project.ProjectViewModel;
+import x_ware.com.edl.networking.dto.GetListDTO;
+import x_ware.com.edl.networking.dto.appointment.AppointmentViewDTO;
+import x_ware.com.edl.networking.dto.project.ProjectViewDTO;
 import x_ware.com.edl.networking.RetrofitProvider;
 
 public class ProjectActivity extends AppCompatActivity {
@@ -35,7 +35,7 @@ public class ProjectActivity extends AppCompatActivity {
     private RecyclerView.Adapter projectAdapter;
     private RecyclerView rcvProject;
 
-    private AppointmentViewModel appointment;
+    private AppointmentViewDTO appointment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +52,7 @@ public class ProjectActivity extends AppCompatActivity {
     //-> initializeComponents
     private void initializeComponents(){
         if(getIntent() != null && getIntent().hasExtra("AppointmentViewModel"))
-            appointment = (AppointmentViewModel) getIntent().getSerializableExtra("AppointmentViewModel");
+            appointment = (AppointmentViewDTO) getIntent().getSerializableExtra("AppointmentViewModel");
 
         setUpViews();
         getProjects();
@@ -89,12 +89,12 @@ public class ProjectActivity extends AppCompatActivity {
     }
 
     //-> handleGetProjectsResult
-    private void handleGetProjects(Response<GetListModel<ProjectViewModel>> response){
+    private void handleGetProjects(Response<GetListDTO<ProjectViewDTO>> response){
         if(ApiHelper.isSuccessful(this, response.code())){
             IRecyclerViewClickListener listener = new IRecyclerViewClickListener() {
                 @Override
                 public void onClick(View view, int position, Object obj) {
-                    ProjectViewModel project = (ProjectViewModel)obj;
+                    ProjectViewDTO project = (ProjectViewDTO)obj;
                     Intent intent =  new Intent(getApplicationContext(), ProjectDetailActivity.class);
                     intent.putExtra("ProjectViewModel", project);
                     startActivity(intent);
@@ -105,7 +105,7 @@ public class ProjectActivity extends AppCompatActivity {
                     Log.d(TAG, "onLongClick: ");
                 }
             };
-            List<ProjectViewModel> projects = response.body().items;
+            List<ProjectViewDTO> projects = response.body().items;
             projectAdapter = new ProjectAdapter(projects, this , listener);
             rcvProject.setAdapter(projectAdapter);
         }

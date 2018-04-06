@@ -10,7 +10,7 @@ import java.io.ByteArrayOutputStream;
  * Created by buneavros on 3/20/18.
  */
 
-public class ImageHelper {
+public final class ImageHelper {
 
     /*
     //compress format public static variables

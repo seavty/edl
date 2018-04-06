@@ -3,7 +3,6 @@ package x_ware.com.edl.modules.appointment;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.view.LayoutInflater;
@@ -11,7 +10,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import x_ware.com.edl.R;
-import x_ware.com.edl.networking.models.appointment.AppointmentViewModel;
+import x_ware.com.edl.networking.dto.appointment.AppointmentViewDTO;
 
 /**
  * Created by buneavros on 3/2/18.
@@ -21,7 +20,7 @@ public class AppointmentDetailDialog extends AppCompatDialogFragment {
 
     private AppointmentDetailDialogListener listener;
     private EditText txtDetail;
-    public AppointmentViewModel appointment;
+    public AppointmentViewDTO appointment;
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         //return super.onCreateDialog(savedInstanceState);
@@ -58,6 +57,6 @@ public class AppointmentDetailDialog extends AppCompatDialogFragment {
     }
 
     public interface AppointmentDetailDialogListener {
-        void onComplete(AppointmentViewModel appointment);
+        void onComplete(AppointmentViewDTO appointment);
     }
 }

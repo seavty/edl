@@ -1,4 +1,4 @@
-package x_ware.com.edl.networking.models;
+package x_ware.com.edl.networking.dto;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -9,10 +9,10 @@ import java.util.List;
  * Created by buneavros on 2/20/18.
  */
 
-public class GetListModel<T> implements Serializable {
+public class GetListDTO<T> implements Serializable {
 
     @SerializedName("metaData")
-    public MetaDataModel metaData;
+    public MetaDataDTO metaData;
 
     @SerializedName("results")
     public List<T> items;

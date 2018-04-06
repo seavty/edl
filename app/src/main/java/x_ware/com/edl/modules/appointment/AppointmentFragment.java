@@ -31,8 +31,8 @@ import x_ware.com.edl.helpers.ApiHelper;
 import x_ware.com.edl.helpers.DateTimeHelper;
 import x_ware.com.edl.helpers.ProgressDialogHelper;
 import x_ware.com.edl.interfaces.IRecyclerViewClickListener;
-import x_ware.com.edl.networking.models.GetListModel;
-import x_ware.com.edl.networking.models.appointment.AppointmentViewModel;
+import x_ware.com.edl.networking.dto.GetListDTO;
+import x_ware.com.edl.networking.dto.appointment.AppointmentViewDTO;
 import x_ware.com.edl.networking.RetrofitProvider;
 
 /**
@@ -110,12 +110,12 @@ public class AppointmentFragment extends Fragment {
     }
 
     //-> handleGetAppointments
-    private void handleGetAppointments(Response<GetListModel<AppointmentViewModel>> response) {
+    private void handleGetAppointments(Response<GetListDTO<AppointmentViewDTO>> response) {
         if(ApiHelper.isSuccessful(getActivity(), response.code())){
             IRecyclerViewClickListener listener = new IRecyclerViewClickListener() {
                 @Override
                 public void onClick(View view, int position, Object obj) {
-                    AppointmentViewModel appointment = (AppointmentViewModel) obj;
+                    AppointmentViewDTO appointment = (AppointmentViewDTO) obj;
                     Intent intent = new Intent(getActivity(), AppointmentDetailActivity.class);
                     intent.setData(null);
                     intent.putExtra("AppointmentViewModel", appointment);
@@ -128,7 +128,7 @@ public class AppointmentFragment extends Fragment {
                 }
             };
 
-            List<AppointmentViewModel> appointments = response.body().items;
+            List<AppointmentViewDTO> appointments = response.body().items;
             appointmentAdapter = new AppointmentAdapter(appointments, getActivity(), listener);
             rcvAppointment.setAdapter(appointmentAdapter);
         }

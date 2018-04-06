@@ -11,8 +11,7 @@ import java.util.List;
 
 import x_ware.com.edl.R;
 import x_ware.com.edl.interfaces.IRecyclerViewClickListener;
-import x_ware.com.edl.networking.models.project.ProjectCommunicationViewModel;
-import x_ware.com.edl.networking.models.project.ProjectCompanyViewModel;
+import x_ware.com.edl.networking.dto.project.ProjectCompanyViewDTO;
 
 /**
  * Created by buneavros on 2/23/18.
@@ -21,11 +20,11 @@ import x_ware.com.edl.networking.models.project.ProjectCompanyViewModel;
 public class ProjectCompanyAdapter extends RecyclerView.Adapter<ProjectCompanyAdapter.ViewHolder> {
 
     private static final String TAG = "ProjectCompanyAdapter";
-    private List<ProjectCompanyViewModel> projectCompanies;
+    private List<ProjectCompanyViewDTO> projectCompanies;
     private Context context;
     private IRecyclerViewClickListener listener;
 
-    public ProjectCompanyAdapter(List<ProjectCompanyViewModel> projectCompanies, Context context, IRecyclerViewClickListener listener) {
+    public ProjectCompanyAdapter(List<ProjectCompanyViewDTO> projectCompanies, Context context, IRecyclerViewClickListener listener) {
         this.projectCompanies = projectCompanies;
         this.context = context;
         this.listener = listener;
@@ -38,7 +37,7 @@ public class ProjectCompanyAdapter extends RecyclerView.Adapter<ProjectCompanyAd
 
     @Override
     public void onBindViewHolder(ProjectCompanyAdapter.ViewHolder holder, int position) {
-        ProjectCompanyViewModel projectCompany = projectCompanies.get(position);
+        ProjectCompanyViewDTO projectCompany = projectCompanies.get(position);
         //-- remember id must convert to text first before setting
         holder.lblAffiliate.setText(projectCompany.affiliate);
         holder.lblRelationship.setText(projectCompany.relationship);
@@ -64,13 +63,13 @@ public class ProjectCompanyAdapter extends RecyclerView.Adapter<ProjectCompanyAd
 
         @Override
         public void onClick(View view) {
-            ProjectCompanyViewModel projectCompany = projectCompanies.get(getAdapterPosition());
+            ProjectCompanyViewDTO projectCompany = projectCompanies.get(getAdapterPosition());
             listener.onClick(view, getAdapterPosition(), projectCompany);
         }
 
         @Override
         public boolean onLongClick(View view) {
-            ProjectCompanyViewModel projectCompany = projectCompanies.get(getAdapterPosition());
+            ProjectCompanyViewDTO projectCompany = projectCompanies.get(getAdapterPosition());
             listener.onLongClick(view, getAdapterPosition(), projectCompany);
             return true;
         }

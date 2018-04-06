@@ -11,8 +11,7 @@ import java.util.List;
 
 import x_ware.com.edl.R;
 import x_ware.com.edl.interfaces.IRecyclerViewClickListener;
-import x_ware.com.edl.networking.models.appointment.AppointmentViewModel;
-import x_ware.com.edl.networking.models.project.ProjectViewModel;
+import x_ware.com.edl.networking.dto.project.ProjectViewDTO;
 
 /**
  * Created by buneavros on 2/23/18.
@@ -21,11 +20,11 @@ import x_ware.com.edl.networking.models.project.ProjectViewModel;
 public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHolder> {
 
     private static final String TAG = "ProjectAdapter";
-    private List<ProjectViewModel> projects;
+    private List<ProjectViewDTO> projects;
     private Context context;
     private IRecyclerViewClickListener listener;
 
-    public ProjectAdapter(List<ProjectViewModel> projects, Context context, IRecyclerViewClickListener listener) {
+    public ProjectAdapter(List<ProjectViewDTO> projects, Context context, IRecyclerViewClickListener listener) {
         this.projects = projects;
         this.context = context;
         this.listener = listener;
@@ -38,7 +37,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ProjectAdapter.ViewHolder holder, int position) {
-        ProjectViewModel project = projects.get(position);
+        ProjectViewDTO project = projects.get(position);
         //-- remember id must convert to text first before setting
         holder.lblProjectName.setText(project.description);
         holder.lblStage.setText(project.stage); //tmp use other field // becos api not yet ready
@@ -64,13 +63,13 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHold
 
         @Override
         public void onClick(View view) {
-            ProjectViewModel project = projects.get(getAdapterPosition());
+            ProjectViewDTO project = projects.get(getAdapterPosition());
             listener.onClick(view, getAdapterPosition(), project);
         }
 
         @Override
         public boolean onLongClick(View view) {
-            ProjectViewModel project = projects.get(getAdapterPosition());
+            ProjectViewDTO project = projects.get(getAdapterPosition());
             listener.onLongClick(view, getAdapterPosition(), project);
             return true;
         }

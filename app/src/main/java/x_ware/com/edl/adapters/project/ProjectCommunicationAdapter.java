@@ -11,7 +11,7 @@ import java.util.List;
 
 import x_ware.com.edl.R;
 import x_ware.com.edl.interfaces.IRecyclerViewClickListener;
-import x_ware.com.edl.networking.models.project.ProjectCommunicationViewModel;
+import x_ware.com.edl.networking.dto.project.ProjectCommunicationViewDTO;
 
 /**
  * Created by buneavros on 2/23/18.
@@ -20,11 +20,11 @@ import x_ware.com.edl.networking.models.project.ProjectCommunicationViewModel;
 public class ProjectCommunicationAdapter extends RecyclerView.Adapter<ProjectCommunicationAdapter.ViewHolder> {
 
     private static final String TAG = "ProjectCommunicationAda";
-    private List<ProjectCommunicationViewModel> projectCommunications;
+    private List<ProjectCommunicationViewDTO> projectCommunications;
     private Context context;
     private IRecyclerViewClickListener listener;
 
-    public ProjectCommunicationAdapter(List<ProjectCommunicationViewModel> projectCommunications, Context context, IRecyclerViewClickListener listener) {
+    public ProjectCommunicationAdapter(List<ProjectCommunicationViewDTO> projectCommunications, Context context, IRecyclerViewClickListener listener) {
         this.projectCommunications = projectCommunications;
         this.context = context;
         this.listener = listener;
@@ -37,7 +37,7 @@ public class ProjectCommunicationAdapter extends RecyclerView.Adapter<ProjectCom
 
     @Override
     public void onBindViewHolder(ProjectCommunicationAdapter.ViewHolder holder, int position) {
-        ProjectCommunicationViewModel projectCommunication = projectCommunications.get(position);
+        ProjectCommunicationViewDTO projectCommunication = projectCommunications.get(position);
         //-- remember id must convert to text first before setting
 
         holder.lblCompanyName.setText(projectCommunication.companyName);
@@ -66,13 +66,13 @@ public class ProjectCommunicationAdapter extends RecyclerView.Adapter<ProjectCom
 
         @Override
         public void onClick(View view) {
-            ProjectCommunicationViewModel projectCommunication = projectCommunications.get(getAdapterPosition());
+            ProjectCommunicationViewDTO projectCommunication = projectCommunications.get(getAdapterPosition());
             listener.onClick(view, getAdapterPosition(), projectCommunication);
         }
 
         @Override
         public boolean onLongClick(View view) {
-            ProjectCommunicationViewModel projectCommunication = projectCommunications.get(getAdapterPosition());
+            ProjectCommunicationViewDTO projectCommunication = projectCommunications.get(getAdapterPosition());
             listener.onLongClick(view, getAdapterPosition(), projectCommunication);
             return true;
         }

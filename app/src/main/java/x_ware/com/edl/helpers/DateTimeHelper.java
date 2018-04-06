@@ -16,7 +16,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class DateTimeHelper {
+public final class DateTimeHelper {
 
     private static final String TAG = DateTimeHelper.class.getSimpleName();
     public static String time_HH_MM(int hour, int minute){

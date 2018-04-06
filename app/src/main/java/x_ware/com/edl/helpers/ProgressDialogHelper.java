@@ -7,7 +7,7 @@ import android.content.Context;
  * Created by buneavros on 3/7/18.
  */
 
-public class ProgressDialogHelper {
+public final class ProgressDialogHelper {
 
     public static ProgressDialog getInstance(Context context) {
         ProgressDialog progress;

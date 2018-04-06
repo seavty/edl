@@ -16,7 +16,7 @@ import java.util.List;
 import x_ware.com.edl.R;
 import x_ware.com.edl.helpers.DateTimeHelper;
 import x_ware.com.edl.interfaces.IRecyclerViewClickListener;
-import x_ware.com.edl.networking.models.appointment.AppointmentViewModel;
+import x_ware.com.edl.networking.dto.appointment.AppointmentViewDTO;
 import x_ware.com.edl.modules.project.ProjectActivity;
 
 /**
@@ -26,11 +26,11 @@ import x_ware.com.edl.modules.project.ProjectActivity;
 public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.ViewHolder> {
 
     private static final String TAG = "AppointmentAdapter";
-    private List<AppointmentViewModel> appointments;
+    private List<AppointmentViewDTO> appointments;
     private Context context;
     private IRecyclerViewClickListener listener;
 
-    public AppointmentAdapter(List<AppointmentViewModel> appointments, Context context, IRecyclerViewClickListener listener) {
+    public AppointmentAdapter(List<AppointmentViewDTO> appointments, Context context, IRecyclerViewClickListener listener) {
         this.appointments = appointments;
         this.context = context;
         this.listener = listener;
@@ -44,7 +44,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
 
     @Override
     public void onBindViewHolder(AppointmentAdapter.ViewHolder holder, int position) {
-        AppointmentViewModel appointment = appointments.get(position);
+        AppointmentViewDTO appointment = appointments.get(position);
         //-- remember id must convert to text first before setting
         //holder.lblTiming.setText(DateTimeHelper.convert_yyyy_mm_dd_t_hh_mm_ss_To_dd_mm_yyy_hh_mm(appointment.timing));
         holder.lblTiming.setText(DateTimeHelper.convert_yyyy_mm_dd_t_hh_mm_ss_To_hh_mm_With_am_pm(appointment.timing));
@@ -129,13 +129,13 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
 
         @Override
         public void onClick(View view) {
-            AppointmentViewModel appointment = appointments.get(getAdapterPosition());
+            AppointmentViewDTO appointment = appointments.get(getAdapterPosition());
             listener.onClick(view, getAdapterPosition(), appointment);
         }
 
         @Override
         public boolean onLongClick(View view) {
-            AppointmentViewModel appointment = appointments.get(getAdapterPosition());
+            AppointmentViewDTO appointment = appointments.get(getAdapterPosition());
             listener.onLongClick(view, getAdapterPosition(), appointment);
             return true;
         }
