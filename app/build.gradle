@@ -56,4 +56,5 @@ dependencies {
     */
 
     implementation 'com.mindorks:paracamera:0.2.2'
+    implementation 'com.vistrav:ask:2.5'
 }

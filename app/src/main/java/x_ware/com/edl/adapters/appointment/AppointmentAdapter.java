@@ -86,6 +86,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
             context.startActivity(intent);
         });
 
+
         if(appointment.address !=null && !appointment.address.equals("")) {
 
             holder.lblAddress.setOnClickListener(view -> {

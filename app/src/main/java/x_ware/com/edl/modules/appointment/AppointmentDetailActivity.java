@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -29,6 +30,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.vistrav.ask.Ask;
 
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -165,6 +167,40 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
         imbEditSubject.setOnClickListener(view -> openDetailDialog());
 
         imbCamera.setOnClickListener(view -> openCamera());
+        
+        lblPhoneNumber.setOnClickListener(view -> phoneCall());
+    }
+
+    private void phoneCall() {
+        Ask.on(this)
+                .id(1001) // in case you are invoking multiple time Ask from same activity or fragment
+                .forPermissions(Manifest.permission.CALL_PHONE)
+                .withRationales("Phone call permission needed",
+                        "In order to make phone call you need to allow phone call permission") //optional
+                .go();
+
+        String phoneNumber = lblPhoneNumber.getText().toString();
+        if (!phoneNumber.isEmpty()) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Calling")
+                    .setMessage("Do you want to call to this number " + phoneNumber + " ?")
+                    .setCancelable(false)
+                    .setPositiveButton("Yes", (dialog, id) -> {
+                        Intent callIntent = new Intent(Intent.ACTION_CALL);
+                        callIntent.setData(Uri.parse("tel:" + phoneNumber));
+                        if (ActivityCompat.checkSelfPermission(AppointmentDetailActivity.this, Manifest.permission.CALL_PHONE) ==
+                                PackageManager.PERMISSION_GRANTED) {
+                            callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            (AppointmentDetailActivity.this).startActivity(callIntent);
+                        } else {
+                            Toast.makeText(AppointmentDetailActivity.this, "Please enable Phone Call permission", Toast.LENGTH_SHORT).show();
+                        }
+
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
+        }
+
     }
 
     //-> openCamera
