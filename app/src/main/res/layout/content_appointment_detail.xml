@@ -101,13 +101,27 @@
 
                         <TextView
                             android:id="@+id/lblCompanyName"
-                            android:layout_width="match_parent"
+                            android:layout_width="0sp"
                             android:layout_height="wrap_content"
+                            android:layout_weight="2"
                             android:layout_gravity="center"
                             android:layout_marginLeft="@dimen/text_view_margin_left"
-                            android:text="Company Name Dummy"
+                            android:text="Comp Name"
                             android:textColor="@color/black"
                             android:textSize="@dimen/text_size_medium" />
+
+                        <TextView
+                            android:id="@+id/lblCompanyPhoneNumber"
+                            android:layout_width="0sp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1
+"
+                            android:layout_gravity="center"
+                            android:layout_marginLeft="@dimen/text_view_margin_left"
+                            android:text="Phone"
+                            android:textColor="@color/primary"
+                            android:textSize="@dimen/text_size_medium" />
+
                     </LinearLayout>
                     <!-- End Company Name -->
 
@@ -118,22 +132,15 @@
                         android:orientation="horizontal">
                         <TextView
                             android:id="@+id/lblContactPerson"
-                            android:layout_width="match_parent"
+                            android:layout_width="0sp"
                             android:layout_height="wrap_content"
+                            android:layout_weight="2"
                             android:layout_gravity="center"
                             android:layout_marginLeft="@dimen/text_view_margin_left"
                             android:text="ABC dummy"
                             android:textColor="@color/black"
                             android:textSize="@dimen/text_size_medium" />
-                    </LinearLayout>
-                    <!-- End Contact Person -->
 
-
-                    <!--Phone -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
 
                         <ImageView
                             android:layout_width="@dimen/image_view_width"
@@ -143,16 +150,37 @@
                             android:visibility="gone" />
 
                         <TextView
-                            android:id="@+id/lblPhoneNumber"
-                            android:layout_width="match_parent"
+                            android:id="@+id/lblPersonPhoneNumber"
+                            android:layout_width="0sp"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
                             android:layout_gravity="center"
                             android:layout_marginLeft="@dimen/text_view_margin_left"
-                            android:text="012 123 456 dummy"
+                            android:text="Phone"
                             android:textColor="@color/primary"
                             android:textSize="@dimen/text_size_medium" />
+
                     </LinearLayout>
-                    <!-- End Phone -->
+                    <!-- End Contact Person -->
+
+
+                    <!-- Title  -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/lblPersonTitle"
+                            android:layout_width="0sp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginLeft="@dimen/text_view_margin_left"
+                            android:text="Title"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/text_size_medium" />
+
+                    </LinearLayout>
+                    <!-- End Title -->
 
 
                     <!--subject -->

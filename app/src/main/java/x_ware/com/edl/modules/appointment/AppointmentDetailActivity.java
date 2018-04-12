@@ -4,7 +4,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -55,7 +54,8 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
     private static final String TAG = "AppointmentDetailActivi";
 
     private ProgressDialog progress;
-    private TextView lblTiming, lblCompanyName, lblPhoneNumber, lblSubject, lblDetail;
+    private TextView lblTiming, lblCompanyName, lblCompanyPhoneNumber, lblSubject, lblDetail;
+    private TextView lblPersonPhoneNumber, lblPersonTitle;
     private TextView lblContactPerson;
     private Button btnCheckInOrCheckOut;
     private ImageButton imbEditSubject, imbCamera;
@@ -131,11 +131,13 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
 
         lblTiming = findViewById(R.id.lblTiming);
         lblCompanyName = findViewById(R.id.lblCompanyName);
-        lblPhoneNumber = findViewById(R.id.lblPhoneNumber);
+        lblCompanyPhoneNumber = findViewById(R.id.lblCompanyPhoneNumber);
+        lblContactPerson = findViewById(R.id.lblContactPerson);
+        lblPersonPhoneNumber = findViewById(R.id.lblPersonPhoneNumber);
+
         lblSubject = findViewById(R.id.lblSubject);
         lblDetail = findViewById(R.id.lblDetail);
-
-        lblContactPerson = findViewById(R.id.lblContactPerson);
+        lblPersonTitle = findViewById(R.id.lblPersonTitle);
 
         btnCheckInOrCheckOut = findViewById(R.id.btnCheckInOrCheckOut);
 
@@ -168,19 +170,21 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
 
         imbCamera.setOnClickListener(view -> openCamera());
         
-        lblPhoneNumber.setOnClickListener(view -> phoneCall());
+        lblCompanyPhoneNumber.setOnClickListener(view -> phoneCall(lblCompanyPhoneNumber.getText().toString()));
+
+        lblPersonPhoneNumber.setOnClickListener(view -> phoneCall(lblPersonPhoneNumber.getText().toString()));
+
+
     }
 
-    private void phoneCall() {
+    private void phoneCall(String phoneNumber) {
         Ask.on(this)
                 .id(1001) // in case you are invoking multiple time Ask from same activity or fragment
                 .forPermissions(Manifest.permission.CALL_PHONE)
                 .withRationales("Phone call permission needed",
                         "In order to make phone call you need to allow phone call permission") //optional
                 .go();
-
-        String phoneNumber = lblPhoneNumber.getText().toString();
-        if (!phoneNumber.isEmpty()) {
+    if (!phoneNumber.isEmpty()) {
             new AlertDialog.Builder(this)
                     .setTitle("Calling")
                     .setMessage("Do you want to call to this number " + phoneNumber + " ?")
@@ -247,8 +251,13 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
         //lblTiming.setText(DateTimeHelper.convert_yyyy_mm_dd_t_hh_mm_ss_To_dd_mm_yyy_hh_mm(appointment.timing));
         lblTiming.setText(DateTimeHelper.convert_yyyy_mm_dd_t_hh_mm_ss_To_hh_mm_With_am_pm(appointment.timing));
         lblCompanyName.setText(appointment.companyName);
+        lblCompanyPhoneNumber.setText(appointment.phoneNumber);
+
         lblContactPerson.setText(appointment.fullName);
-        lblPhoneNumber.setText(appointment.phoneNumber);
+        lblPersonPhoneNumber.setText(appointment.personPhoneNumber);
+
+        lblPersonTitle.setText(appointment.personTitle);
+
         lblSubject.setText(appointment.subject);
         lblDetail.setText(appointment.details);
 

@@ -39,4 +39,10 @@ public class AppointmentViewDTO implements Serializable {
 
     @SerializedName("Pers_FullName")
     public String fullName;
+
+    @SerializedName("Pers_PhoneNumber")
+    public String personPhoneNumber;
+
+    @SerializedName("Pers_Title")
+    public String personTitle;
 }
