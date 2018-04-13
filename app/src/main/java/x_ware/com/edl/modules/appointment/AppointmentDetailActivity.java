@@ -41,6 +41,7 @@ import x_ware.com.edl.helpers.ApiHelper;
 import x_ware.com.edl.helpers.CameraHelper;
 import x_ware.com.edl.helpers.DateTimeHelper;
 import x_ware.com.edl.helpers.ImageHelper;
+import x_ware.com.edl.helpers.StringHelper;
 import x_ware.com.edl.networking.api.IAppointmentAPI;
 import x_ware.com.edl.helpers.ProgressDialogHelper;
 import x_ware.com.edl.networking.dto.appointment.AppointmentCheckInDTO;
@@ -245,21 +246,23 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
 
     //-> displayData()
     private void displayData() {
+
+        AppointmentViewDTO tmp = (AppointmentViewDTO) StringHelper.tmp(appointment);
+
         imbEditSubject.setVisibility(View.INVISIBLE);
         imbCamera.setVisibility(View.INVISIBLE);
 
         //lblTiming.setText(DateTimeHelper.convert_yyyy_mm_dd_t_hh_mm_ss_To_dd_mm_yyy_hh_mm(appointment.timing));
         lblTiming.setText(DateTimeHelper.convert_yyyy_mm_dd_t_hh_mm_ss_To_hh_mm_With_am_pm(appointment.timing));
-        lblCompanyName.setText(appointment.companyName);
+        lblCompanyName.setText(StringHelper.nullToEmptyString(appointment.companyName) + ":");
         lblCompanyPhoneNumber.setText(appointment.phoneNumber);
 
-        lblContactPerson.setText(appointment.fullName);
+        lblContactPerson.setText("Contact Name: "+ StringHelper.nullToEmptyString(appointment.fullName));
         lblPersonPhoneNumber.setText(appointment.personPhoneNumber);
 
-        lblPersonTitle.setText(appointment.personTitle);
-
-        lblSubject.setText(appointment.subject);
-        lblDetail.setText(appointment.details);
+        lblPersonTitle.setText("Title:" + StringHelper.nullToEmptyString(appointment.personTitle));
+        lblSubject.setText("Subject:" + StringHelper.nullToEmptyString(appointment.subject));
+        lblDetail.setText("Communication Details: " + StringHelper.nullToEmptyString(appointment.details));
 
         if (appointment.checkIncheckOut != null) {
             if (appointment.checkIncheckOut.equals("Checked In")) {
@@ -501,3 +504,6 @@ public class AppointmentDetailActivity extends AppCompatActivity implements Appo
     }
 
 }
+
+
+

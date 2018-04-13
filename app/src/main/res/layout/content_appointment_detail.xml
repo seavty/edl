@@ -114,8 +114,7 @@
                             android:id="@+id/lblCompanyPhoneNumber"
                             android:layout_width="0sp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1
-"
+                            android:layout_weight="1"
                             android:layout_gravity="center"
                             android:layout_marginLeft="@dimen/text_view_margin_left"
                             android:text="Phone"
